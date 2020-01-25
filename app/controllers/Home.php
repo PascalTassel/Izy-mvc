@@ -13,7 +13,7 @@ class Home extends \core\libraries\IZI_Controller{
 
   public static function index()
   {
-    // View
+    // View hh
     \core\libraries\IZI_Output::set_view("home");
   }
 }
