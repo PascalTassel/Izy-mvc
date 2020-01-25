@@ -12,4 +12,4 @@ if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 $routes["404_url"] = "";
 
 // DEFAULT CONTROLLER
-$routes["index"] = "welcome";
+$routes["index"] = "home";

@@ -13,7 +13,14 @@ class Home extends \core\libraries\IZI_Controller{
 
   public static function index()
   {
-    // View hh
+    // Layout
+    \core\libraries\IZI_Output::set_layout([
+      "name" => "default",
+      "title" => "Light Web Framework",
+      "description" => "toto"
+    ]);
+
+    // View
     \core\libraries\IZI_Output::set_view("home");
   }
 }
