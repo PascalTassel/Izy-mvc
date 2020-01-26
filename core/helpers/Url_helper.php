@@ -15,7 +15,7 @@ class Url_helper
   public static function get_segment($key = 0)
   {
     $segments = self::get_segments();
-    return count($segments) >= ($key + 1) ? $segments[$key] : NULL;
+    return (count($segments) >= ($key + 1)) && ($segments[$key] != "") ? $segments[$key] : NULL;
   }
 
   public static function get_segments()

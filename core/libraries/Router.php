@@ -70,6 +70,11 @@ class IZI_Router
     }
   }
 
+  public static function get_controller()
+  {
+    return self::$_routing["controller"];
+  }
+
   public static function get_method()
   {
     return self::$_routing["method"];
