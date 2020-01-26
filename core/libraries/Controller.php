@@ -18,7 +18,7 @@ class IZI_Controller
 
   /**
   * Load a model in controller
-  * @param string $model Model class
+  * @param string $model Model namespace
   * @return object Model
   */
   protected function get_model($model)
