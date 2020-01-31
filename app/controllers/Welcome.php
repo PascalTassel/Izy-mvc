@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 class Welcome extends \core\libraries\IZI_Controller
 {
@@ -18,6 +18,6 @@ class Welcome extends \core\libraries\IZI_Controller
   public static function index()
   {
     // View
-    \core\libraries\IZI_Output::set_view("welcome");
+    \core\libraries\IZI_Output::set_view('welcome');
   }
 }
