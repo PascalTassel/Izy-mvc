@@ -1,6 +1,6 @@
 <?php
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /* URI ROUTING
 * Rewrite URI requests to specific controller.
@@ -9,7 +9,7 @@ if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 */
 
 // 404 CONTROLLER
-$routes["404_url"] = "";
+$routes['404_url'] = '';
 
 // DEFAULT CONTROLLER
-$routes["index"] = "welcome";
+$routes['index'] = 'welcome';
