@@ -41,7 +41,7 @@ class IZI_Controller
   /**
   * Default 404 method
   */
-  public function show_404()
+  protected function show_404()
   {
     // 404 header
     IZI_Http::set_code();
