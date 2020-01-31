@@ -144,7 +144,7 @@ class IZI_Router
     {
       self::$_namespace = '\\core\libraries\\';
       self::$_segments = array_slice(self::$_segments, 2);
-      self::$_segments[0] = 'IZI_' . self::$_segments[0];
+      self::$_segments[0] = 'IZI_' . ucfirst(self::$_segments[0]);
       self::$_path = 'core/libraries/';
     }
     else
