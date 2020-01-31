@@ -4,7 +4,8 @@ namespace app\controllers;
 
 if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 
-class Welcome extends \core\libraries\IZI_Controller{
+class Welcome extends \core\libraries\IZI_Controller
+{
 
   public function __construct()
   {

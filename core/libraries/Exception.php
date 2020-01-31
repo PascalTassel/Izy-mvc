@@ -2,7 +2,7 @@
 
 namespace core\libraries;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Customized exceptions
@@ -15,21 +15,21 @@ class IZI_Exception extends \ErrorException
 		switch ($this->severity)
     {
       case E_USER_ERROR : // Fatal error
-        $type = "Fatal error";
+        $type = 'Fatal error';
         break;
 
       case E_WARNING : // Php alert
       case E_USER_WARNING : // User alert
-        $type = "Warning";
+        $type = 'Warning';
         break;
 
       case E_NOTICE : // Php notice
       case E_USER_NOTICE : // User notice
-        $type = "Note";
+        $type = 'Note';
         break;
 
       default :
-        $type = "Unknown error";
+        $type = 'Unknown error';
         break;
     }
 

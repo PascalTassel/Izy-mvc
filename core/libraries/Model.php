@@ -2,7 +2,7 @@
 
 namespace core\libraries;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Abstract model
@@ -12,20 +12,20 @@ class IZI_Model
 {
 	/**
   * Database connection
-  * @param string $name Db name (set in $config["db"])
+  * @param string $name Db name (set in $config['db'])
 	* $path is only empty when called by IZI_Url instance
   */
   protected function db_connect($name)
   {
-    $config = CONFIG["db"];
+    $config = CONFIG['db'];
     $db = $config[$name];
     // Paramètres de connexion
-    $host = $db["host"];
-    $database = $db["name"];
-    $charset = $db["charset"];
-    $user = $db["user"];
-    $pwd = $db["pwd"];
-    $dsn = "mysql:host={$host};dbname={$database};charset={$charset}";
+    $host = $db['host'];
+    $database = $db['name'];
+    $charset = $db['charset'];
+    $user = $db['user'];
+    $pwd = $db['pwd'];
+    $dsn = 'mysql:host=' . $host. ';dbname=' . $database. ';charset=' . $charset;
 
     // PDO Options
     $opts = [
@@ -40,7 +40,7 @@ class IZI_Model
     }
     catch (\PDOException $e)
     {
-      die("Unable to connect to the {$name} database : " . $e->getMessage());
+      die('Unable to connect to the ' . $name . ' database : ' . $e->getMessage());
     }
   }
 }

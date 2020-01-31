@@ -2,7 +2,7 @@
 
 namespace core\libraries;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Load a hook, a controller or a view
@@ -11,54 +11,46 @@ if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 class IZI_Load
 {
 	/**
-  * Load a controller
+  * Load controller
   * @param string $path Controller path
   * @param boolean $hooks Enable hooks
   */
-	public static function controller($url, $hooks = false)
+	public static function controller()
 	{
+		// Get url
+		$url = IZI_Url::get_url();
+
 		// Router instance
-		$router = new IZI_Router();
+		$router = new IZI_Router($url);
 
-		// Get routing
-		$routing = $router::get_routing($url);
+		$namespace = str_replace('core\libraries', '', $router::get_namespace());
+		$class = $namespace . $router::get_controller();
+		$method = $router::get_method();
+		$args = $router::get_args();
 
-		unset($router);
-
-		// Pre_controller hook
-		if($hooks)
-		{
-			self::hook("pre_controller");
-		}
-
-		// Instanciate controller
-		if($routing["controller"] == "IZI_Controller")
-		{
-			$controller = new IZI_Controller();
-		}
-		else
-		{
-			$class = $routing["namespace"] . $routing["controller"];
-			$controller = new $class();
-		}
+		// Controller isntance
+		$controller = new $class();
 
 		try
     {
 			// Call method
-			if(!in_array($routing["method"], get_class_methods($controller)))
+			if(!in_array($method, get_class_methods($controller)))
 			{
-        throw new IZI_Exception("Method {$routing["method"]} not found in controller {$class}.");
+        throw new IZI_Exception('Method ' . $method . ' not found in controller ' . $controller . '.');
       }
-  		call_user_func_array(array($controller, $routing["method"]), $routing["args"]);
+			// Pre_controller hook
+			self::hook('pre_controller');
+
+  		call_user_func_array(array($controller, $method), $args);
+
+			// Unset router
+			unset($router);
 
 		  // Unset controller
 		  unset($controller);
 
 			// Post_controller hook
-			if($hooks)
-			{
-				self::hook("post_controller");
-			}
+			self::hook('post_controller');
     }
     catch (IZI_Exception $e)
     {
@@ -82,14 +74,20 @@ class IZI_Load
 			try
 	    {
 				// Include view
-				if(!is_file(VIEWS_PATH . $view . ".php"))
+				if(!is_file(VIEWS_PATH . $view . '.php'))
 				{
-	        throw new IZI_Exception("File " . VIEWS_PATH . "{$view}.php not found.");
+	        throw new IZI_Exception('View ' . VIEWS_PATH . $view . '.php not found.');
 	      }
 	      // Launch cache
 	      ob_start();
 
-	      include(VIEWS_PATH . $view . ".php");
+				// Pre_view hook
+				self::hook('pre_view');
+
+	      include(VIEWS_PATH . $view . '.php');
+
+				// Post_view hook
+				self::hook('post_view');
 
 	      // Content view
 	      $content = ob_get_contents();
@@ -111,23 +109,23 @@ class IZI_Load
 	*/
 	public static function hook($hook_name)
 	{
-		if(isset(CONFIG["hooks"][$hook_name]))
+		if(isset(CONFIG['hooks'][$hook_name]))
 		{
-			$hook = CONFIG["hooks"][$hook_name];
+			$hook = CONFIG['hooks'][$hook_name];
 
 			try
 	    {
 				// Instanciate hook
-				if(!isset($hook["class"]) || empty($hook["class"]))
+				if(!isset($hook['class']) || empty($hook['class']))
 				{
-	        throw new IZI_Exception("Hook {$hook_name} not defined.");
+	        throw new IZI_Exception('Hook ' . $hook_name . ' : \'class\' key  not exists.');
 	      }
 
-				if(!class_exists($hook["class"]))
+				$class = '\\' . $hook['class'];
+				if(!class_exists($class))
 				{
-	        throw new IZI_Exception("Hook Class {$hook["class"]} not exists.");
+	        throw new IZI_Exception('Hook Class ' . $class . ' not exists.');
 	      }
-				$class = $hook["class"];
 				$controller = new $class();
 			}
 	    catch (IZI_Exception $e)
@@ -138,13 +136,12 @@ class IZI_Load
 			try
 	    {
 				// Call method
-				$method = $hook["method"];
+				$method = $hook['method'];
 				if(!in_array($method, get_class_methods($controller)))
 				{
-	        throw new IZI_Exception("Method {$method} not found in {$class}.");
+	        throw new IZI_Exception('Method ' . $method . 'not found in ' . $class . '.');
 	      }
-				$args = isset($hook["args"]) && (gettype($hook["args"]) == "array") ? $hook["args"] : [];
-				call_user_func_array(array($controller, $method), $args);
+				call_user_func_array(array($controller, $method), []);
 
 				// Unset hook
 				unset($controller);

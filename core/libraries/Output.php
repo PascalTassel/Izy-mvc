@@ -2,7 +2,7 @@
 
 namespace core\libraries;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Display HTML
@@ -10,34 +10,30 @@ if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 */
 class IZI_Output
 {
-	private static $_buffer	= "";								// Content to display
-	private static $_layout = [									// Layout datas
-		"canonicals" => [],
-		"name" => null
-	];
-
-	private static $_view = null;								// View to display
-	private static $_size = 0;									// Output size
-
-	public static function get_size()
-	{
-		return round((self::$_size / 1024), 2);
-	}
+	private static $_output	= '';							// Response content
+	private static $_layout = [];							// Layout datas
+	private static $_canonicals = [];					// Canonicals metas
+	private static $_view = '';								// View to display
 
   /**
   * Défine a layout canonical tag
   * @param string $name Meta name
   * @param string $link Meta link
   */
-  public static function set_canonical($name, $link)
+  public static function set_canonical($rel, $link)
 	{
-		try
+ 		try
 		{
-			if(!in_array($name, ["prev", "canonical", "next"]))
+			if(!in_array($rel, ['prev', 'canonical', 'next']))
 			{
-				throw new IZI_Exception($name . " is not an available attribute for canonical meta tag in IZI_Output::set_canonical() function.");
+				throw new IZI_Exception($rel . ' is not an available attribute for canonical meta tag.');
 			}
-	    self::$_layout["canonicals"][$name] = $link;
+			else if(($link == '') || (gettype($link) != 'string'))
+			{
+				throw new IZI_Exception('$link is empty in canonical meta tag.');
+			}
+
+	    self::$_canonicals[$rel] = $link;
 		}
 		catch (IZI_Exception $e)
 		{
@@ -46,29 +42,23 @@ class IZI_Output
   }
 
   /**
-  * Display raw content
-  * @param string $content Content to display
-  */
-  public static function raw($content)
-	{
-		// Append Content to $_buffer
-		self::append($content);
-  }
-
-  /**
   * Add vars to layout
-  * @param array $vars Associative array
+  * @param array $datas Layout datas
   */
-	public static function set_layout($vars)
+	public static function set_layout($datas)
 	{
     try
     {
-      if(gettype($vars) != "array")
+      if(gettype($datas) != 'array')
       {
-        throw new IZI_Exception("Argument of IZI_Output::set_layout() function must be an array.");
+        throw new IZI_Exception('Argument of set_layout() must be an array.');
       }
+			elseif(isset($datas['path']) && gettype($datas['path']) != 'string')
+			{
+				throw new IZI_Exception('Layout path must be a string.');
+			}
 
-			self::$_layout = array_merge(self::$_layout, $vars);
+			self::$_layout = array_merge(self::$_layout, $datas);
     }
     catch (IZI_Exception $e)
     {
@@ -77,56 +67,80 @@ class IZI_Output
 	}
 
   /**
-  * Get HTML view
-  * @param string $view View name
-  * @param array $datas Data's view
-  * @param boolean $raw Return HTML or append in HTML buffer
+  * Add content to output
+  * @param string $content Content to add
   */
-  public static function set_view($view, $datas = [], $raw = FALSE)
+  public static function set_output($content = '')
 	{
-    self::$_view = $view;
+		try
+		{
+			if(gettype($content) != 'string')
+			{
+				throw new IZI_Exception('Invalid $output type. Adding to $output failed.');
+			}
+
+			// Append content to $output
+			self::$_output .= $content;
+		}
+		catch (IZI_Exception $e)
+		{
+			die($e);
+		}
+  }
+
+  /**
+  * Get HTML view
+  * @param string $path View path
+  * @param array $datas Data's view
+  */
+  public static function set_view($path, $datas = [])
+	{
+    self::$_view = $path;
 
 	  $content = IZI_Load::view(self::$_view, $datas);
 
-		if($raw)
-		{
-			return $content;
-		}
+		// Append HTML view to $output
+		self::set_output($content);
+  }
 
-		// Append HTML view to $_buffer
-		self::append($content);
+  public static function get_output()
+	{
+		return self::$_output;
+  }
+
+  public static function get_canonicals()
+	{
+		return self::$_canonicals;
   }
 
 	/**
   * Display view
 	* @return string Output HTML
   */
-	public static function display()
+	public static function _display()
 	{
-		$output =  self::$_buffer;
-
-		if(!is_null(self::$_layout["name"]) && !is_null(self::$_view))
+		if(isset(self::$_layout['path']) && (self::$_view != ''))
 		{
 			// Get layout keys as vars
 			extract(self::$_layout);
 
 	    // HTML view for layout
-			define("OUTPUT", $output);
+			define('OUTPUT', self::$_output);
 
 			try
 	    {
-	      if(!is_file(LAYOUT_PATH . self::$_layout["name"] . ".php"))
+	      if(!is_file(APP_PATH . self::$_layout['path'] . '.php'))
 	      {
-	        throw new IZI_Exception("Layout " . LAYOUT_PATH . self::$_layout["name"] . ".php not found.");
+	        throw new IZI_Exception('Layout ' . APP_PATH . self::$_layout['path'] . '.php not found.');
 	      }
 		    // Launch cache
 		    ob_start();
 
 		    // Display layout
-		    include(LAYOUT_PATH . self::$_layout["name"] . ".php");
+		    include(APP_PATH . self::$_layout['path'] . '.php');
 
 		    // Get HTML
-		    $output = ob_get_contents();
+		    self::$_output = ob_get_contents();
 
 				// Close cache
 				ob_end_clean();
@@ -137,31 +151,23 @@ class IZI_Output
 	    }
 		}
 
-		// Content size
-		self::$_size = mb_strlen($output);
-
 		// HTML made with PHP, no cache
-		IZI_Http::add_header("Expires: 0");
-		IZI_Http::add_header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		IZI_Http::add_header("Cache-Control: no-store, no-cache, must-revalidate");
+		IZI_Http::add_header('Expires: 0');
+		IZI_Http::add_header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		IZI_Http::add_header('Cache-Control: no-store, no-cache, must-revalidate');
 
 		IZI_Http::send_headers();
 
 		// Display
-		echo $output;
+		echo self::$_output;
 
 		// Post_display hook
-		IZI_Load::hook("post_display");
+		IZI_Load::hook('post_system');
 	}
 
-	public static function append($output)
+	public static function _flush()
 	{
-		self::$_buffer .= $output;
-	}
-
-	public static function flush()
-	{
-		while(ob_get_level()>0)
+		while(ob_get_level() > 0)
 		{
 			ob_end_clean();
 		}

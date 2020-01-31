@@ -2,7 +2,7 @@
 
 namespace core\libraries;
 
-if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
+if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Define path, namespace, controller, method and args
@@ -10,36 +10,37 @@ if(!defined("IZI")) die("DIRECT ACCESS FORBIDDEN");
 */
 class IZI_Router
 {
-  private static $_routes;                              // Routes (set in $routes[])
-  private static $_segments;                            // Output url as array
-  private static $_controller_path = CONTROLLERS_PATH;  // Path to controller
-  private static $_namespace;                           // Controller's namespace
-  private static $_method = "index";                    // Default method
-  private static $_routing;                             // Url routing infos
+  private static $_routes;                             // Routes (set in $routes[])
+  private static $_segments;                           // Output url as array
+  private static $_path = 'app/controllers/';          // Controller's path
+  private static $_namespace;                          // Controller's namespace
+  private static $_controller;                         // Controller
+  private static $_method = 'index';                   // Default method
+  private static $_args = [];                          // Method arguments
 
-  public function __construct()
+  public function __construct($url)
   {
     // Controller namespace
-    self::$_namespace = "\\" . str_replace([DIR_PATH, "/"], ["", "\\"], CONTROLLERS_PATH);
+    self::$_namespace = '\\' . str_replace([DIR_PATH, '/'], ['', '\\'], CONTROLLERS_PATH);
 
     try
     {
       // Include routes
-      if(!is_file(CONFIG_PATH . "routes.php"))
+      if(!is_file(CONFIG_PATH . 'routes.php'))
       {
-        throw new IZI_Exception("File " . CONFIG_PATH . "routes.php not found.");
+        throw new IZI_Exception('File ' . CONFIG_PATH . 'routes.php not found.');
       }
-      include(CONFIG_PATH . "routes.php");
+      include(CONFIG_PATH . 'routes.php');
 
       if(!isset($routes))
       {
-        throw new IZI_Exception("Routes array is undefined.");
+        throw new IZI_Exception('Routes array is undefined.');
       }
 
       // Custom routes
       foreach(scandir(CONFIG_PATH) as $route)
       {
-        if(preg_match("#_routes.php$#", $route))
+        if(preg_match('#_routes.php$#', $route))
         {
           include(CONFIG_PATH . $route);
         }
@@ -48,50 +49,61 @@ class IZI_Router
       self::$_routes = $routes;
 
       // Undefined 404_url route
-      if(!isset(self::$_routes["404_url"]))
+      if(!isset(self::$_routes['404_url']))
       {
-        throw new IZI_Exception("404's route undefined.");
+        throw new IZI_Exception('404\'s route undefined.');
       }
       // Default 404_url
-      else if(self::$_routes["404_url"] == "")
+      else if(self::$_routes['404_url'] == '')
       {
-        self::$_routes["404_url"] = "core/libraries/IZI_Controller/error_404";
+        self::$_routes['404_url'] = 'core/libraries/controller/show_404';
       }
 
       // Index url
-      if(!isset(self::$_routes["index"]))
+      if(!isset(self::$_routes['index']))
       {
-        throw new IZI_Exception("Index's route undefined.");
+        throw new IZI_Exception('Index\'s route undefined.');
       }
+      // Index page if url empty
+      $url = $url == '' ? self::$_routes['index'] : $url;
     }
     catch (IZI_Exception $e)
     {
       die($e);
     }
+
+    self::set_routing($url);
+  }
+
+  public static function get_args()
+	{
+		return self::$_args;
   }
 
   public static function get_controller()
-  {
-    return self::$_routing["controller"];
+	{
+		return self::$_controller;
   }
 
   public static function get_method()
-  {
-    return self::$_routing["method"];
+	{
+		return self::$_method;
   }
 
-  /**
-  * Get route from $_segments
-  */
+  public static function get_namespace()
+	{
+		return self::$_namespace;
+  }
+
   private static function get_route()
 	{
     // Write url
-    $url = implode("/", array_filter(self::$_segments));
+    $url = implode('/', array_filter(self::$_segments));
 
     // If isset url
 		if(isset(self::$_routes[$url]))
 		{
-      self::$_segments = explode("/", self::$_routes[$url]);
+      self::$_segments = explode('/', self::$_routes[$url]);
 		}
 		else
     {
@@ -99,14 +111,14 @@ class IZI_Router
   		foreach(self::$_routes as $key => $val)
   		{
         // RegEx match ?
-  			if(preg_match("#^".$key."$#", $url))
+  			if(preg_match('#^' . $key . '$#', $url))
   			{
   				// Do we have a back-reference?
-  				if(strpos($val, "$") !== FALSE AND strpos($key, "(") !== FALSE)
+  				if(strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE)
   				{
-            $val = preg_replace("#^".$key."$#", $val, $url);
+            $val = preg_replace('#^' . $key . '$#', $val, $url);
   				}
-          self::$_segments = explode("/", $val);
+          self::$_segments = explode('/', $val);
 
   				break;
   			}
@@ -119,37 +131,26 @@ class IZI_Router
   * @param string $url Input url
   * @return array $_routing
   */
-	public static function get_routing($url)
+	public static function set_routing($url)
 	{
-    // Index if undefined
-    $url = $url == "" ? self::$_routes["index"] : $url;
-
     // Split url
-    self::$_segments = array_filter(explode("/", $url));
-
-    // Default routing
-    self::$_routing = [
-      "path" => "",
-      "namespace" => self::$_namespace,
-      "controller" => null,
-      "method" => self::$_method,
-      "args" => []
-    ];
+    self::$_segments = array_filter(explode('/', $url));
 
     // Route ?
     self::get_route();
 
-    // IZI_Controller ?
-    if(self::$_segments[0] == "core")
+    // Core controller ?
+    if(self::$_segments[0] == 'core')
     {
-      self::$_controller_path = "core/libraries/";
-      self::$_routing["namespace"] = "\\core\libraries\\";
+      self::$_namespace = '\\core\libraries\\';
       self::$_segments = array_slice(self::$_segments, 2);
+      self::$_segments[0] = 'IZI_' . self::$_segments[0];
+      self::$_path = 'core/libraries/';
     }
     else
     {
       // Dir ?
-      $is_dir = is_dir(self::$_controller_path . self::$_segments[0]);
+      $is_dir = is_dir(CONTROLLERS_PATH . self::$_segments[0]);
 
       try
       {
@@ -157,14 +158,16 @@ class IZI_Router
         {
           if(count(self::$_segments) == 1)
           {
-            throw new IZI_Exception("Controller is not defined.");
+            throw new IZI_Exception('Controller is not defined.');
           }
 
           // Namespace
-          self::$_routing["namespace"] .= self::$_segments[0] . "\\";
+          self::$_namespace .= self::$_segments[0] . '\\';
 
-          // Define dir and update segments
-          self::$_routing["path"] .= self::$_segments[0] ."/";
+          // Add to path
+          self::$_path .= self::$_segments[0] . '/';
+
+          // update segments
           self::$_segments = array_slice(self::$_segments, 1);
         }
       }
@@ -174,37 +177,39 @@ class IZI_Router
       }
     }
 
-
     // Controller
-    $controller = ucfirst(self::$_segments[0]);
-    self::$_routing["path"] .= $controller;
+    $_controller = ucfirst(self::$_segments[0]);
+    // Add to path
+    self::$_path .= $_controller . '/';
 
     // If controller exists
-    if(class_exists(self::$_routing["namespace"] . $controller))
+    if(class_exists(self::$_namespace . $_controller))
     {
-      self::$_routing["controller"] = $controller;
+      self::$_controller = $_controller;
 
       // Method ?
       if(count(self::$_segments) >= 2)
       {
-        self::$_routing["method"] = self::$_segments[1];
+        self::$_method = self::$_segments[1];
+        // Add to path
+        self::$_path .= self::$_method. '/';
 
         // Arguments
         if(count(self::$_segments) > 2)
         {
-          self::$_routing["args"] = array_slice(self::$_segments, 2);
+          self::$_args = array_slice(self::$_segments, 2);
+          // Add to path
+          self::$_path .= implode('/', self::$_args);
         }
       }
 
+      // Path
+      self::$_path = rtrim(self::$_path, '/');
+
       // 404 url
-      if($url == self::$_routes["404_url"])
+      if($url != self::$_routes['404_url'])
       {
-        // 404 header
-        IZI_Http::set_code();
-      }
-      else
-      {
-        IZI_Output::set_canonical("canonical", \core\helpers\Url_helper::current_url());
+        IZI_Output::set_canonical('canonical', \core\helpers\Url_helper::current_url());
       }
     }
     else
@@ -212,9 +217,9 @@ class IZI_Router
       try
       {
         // 404 Controller not found
-        if($url == self::$_routes["404_url"])
+        if($url == self::$_routes['404_url'])
         {
-          throw new IZI_Exception("404 Controller " . self::$_controller_path . self::$_routing["path"] . " not found.");
+          throw new IZI_Exception('404 Controller ' . self::$_routes['404_url'] . ' not found.');
         }
       }
       catch (IZI_Exception $e)
@@ -222,9 +227,7 @@ class IZI_Router
         die($e);
       }
 
-      self::get_routing(self::$_routes["404_url"]);
+      self::set_routing(self::$_routes['404_url']);
     }
-
-    return self::$_routing;
 	}
 }
