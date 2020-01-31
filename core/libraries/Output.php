@@ -92,12 +92,18 @@ class IZI_Output
   * Get HTML view
   * @param string $path View path
   * @param array $datas Data's view
+  * @param boolean $return Return view content
   */
-  public static function set_view($path, $datas = [])
+  public static function set_view($path, $datas = [], $return = FALSE)
 	{
     self::$_view = $path;
 
 	  $content = IZI_Load::view(self::$_view, $datas);
+
+		if($return)
+		{
+			return $content;
+		}
 
 		// Append HTML view to $output
 		self::set_output($content);
