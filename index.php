@@ -14,9 +14,8 @@ define('VIEWS_PATH', APP_PATH . 'views/');
 spl_autoload_register(function ($class_name)
 {
   $namespace = explode('\\', $class_name);
-  $class = str_replace('IZI_', '', array_pop($namespace));
+  $class = str_replace(['IZI_', 'MY_'], ['', ''], array_pop($namespace));
   $file = implode('/', $namespace) . '/' . $class . '.php';
-
   if(is_file($file))
 	{
     include_once $file;
