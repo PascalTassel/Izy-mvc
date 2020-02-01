@@ -10,7 +10,7 @@ if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZI_Router
 {
-  private static $_routes;                             // Routes (set in $routes[])
+  private static $_routes;                             // Routes (set in app/config/routes.php)
   private static $_segments;                           // Output url as array
   private static $_path = 'app/controllers/';          // Controller's path
   private static $_namespace;                          // Controller's namespace
