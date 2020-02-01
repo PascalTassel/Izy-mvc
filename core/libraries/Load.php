@@ -28,16 +28,6 @@ class IZI_Load
 		$method = $router::get_method();
 		$args = $router::get_args();
 
-    // Extended IZI controller ?
-    if($class == '\core\libraries\IZI_Controller')
-    {
-			$extended_class = str_replace([DIR_PATH, '/'], ['', '\\'], APP_PATH) . 'core\Controller';
-      if(class_exists($extended_class))
-      {
-				$class = $extended_class;
-      }
-    }
-
 		// Controller instance
 		$controller = new $class();
 
