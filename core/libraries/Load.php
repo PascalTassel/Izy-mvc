@@ -23,12 +23,22 @@ class IZI_Load
 		// Router instance
 		$router = new IZI_Router($url);
 
-		$namespace = str_replace('core\libraries', '', $router::get_namespace());
+		$namespace = $router::get_namespace();
 		$class = $namespace . $router::get_controller();
 		$method = $router::get_method();
 		$args = $router::get_args();
 
-		// Controller isntance
+    // Extended IZI controller ?
+    if($class == '\core\libraries\IZI_Controller')
+    {
+			$extended_class = str_replace([DIR_PATH, '/'], ['', '\\'], APP_PATH) . 'core\Controller';
+      if(class_exists($extended_class))
+      {
+				$class = $extended_class;
+      }
+    }
+
+		// Controller instance
 		$controller = new $class();
 
 		try
@@ -36,7 +46,7 @@ class IZI_Load
 			// Call method
 			if(!in_array($method, get_class_methods($controller)))
 			{
-        throw new IZI_Exception('Method ' . $method . ' not found in controller ' . $controller . '.');
+        throw new IZI_Exception('Method ' . $method . ' not found in controller ' . $class . '.');
       }
 			// Pre_controller hook
 			self::hook('pre_controller');
