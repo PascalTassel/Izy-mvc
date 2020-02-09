@@ -97,14 +97,19 @@ if(!function_exists('load_class'))
 				}
 			}
 		}
-
+		
 		// Is the request a class extension? If so we load it too
-		if(file_exists(APP_PATH . $directory . '/MY_' . $class . '.php'))
+		if($name !== FALSE)
 		{
-			if(class_exists($namespaces[APP_PATH] . 'MY_' . $class))
+			if(file_exists(APP_PATH . $directory . '/MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
 			{
 				$name = $namespaces[APP_PATH] . 'MY_' . $class;
 			}
+		}
+		// Load the specified class
+		else if(file_exists(APP_PATH . $directory . '/' . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
+		{
+			$name = $namespaces[APP_PATH] . $class;
 		}
 
 		// Did we find the class?
