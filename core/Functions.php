@@ -287,12 +287,12 @@ if( ! function_exists('view'))
     ob_start();
 
 		// Pre_view hook
-		//self::hook('pre_view');
+		get_instance()->hooks->set_hook('pre_view');
 
     include(VIEWS_PATH . $path . '.php');
 
 		// Post_view hook
-		//self::hook('post_view');
+		get_instance()->hooks->set_hook('post_view');
 
     // Content view
     $content = ob_get_contents();
