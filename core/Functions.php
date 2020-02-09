@@ -97,7 +97,7 @@ if(!function_exists('load_class'))
 				}
 			}
 		}
-		
+
 		// Is the request a class extension? If so we load it too
 		if($name !== FALSE)
 		{
