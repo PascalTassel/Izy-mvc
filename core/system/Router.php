@@ -104,7 +104,7 @@ class IZY_Router
     // Path
     $path = ltrim(str_replace('\\', '/', $namespace), '/');
     // Segments
-    $segments = array_filter(explode('/', $route));
+    $segments = explode('/', $route);
     // Controller
     $controller = '';
     // Method
@@ -121,7 +121,6 @@ class IZY_Router
       // Segments
       $segments = array_slice($segments, 1);
     }
-
     if(count($segments) > 0)
     {
       // Path
@@ -152,7 +151,7 @@ class IZY_Router
       {
         $this->args = array_slice($segments, 2);
         // Path
-        $this->path .= rtrim(implode('/', $this->args));
+        $this->path .= implode('/', $this->args);
       }
     }
     elseif($this->response_code != '404')
