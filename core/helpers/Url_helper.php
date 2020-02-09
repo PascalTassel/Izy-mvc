@@ -2,31 +2,23 @@
 
 namespace core\helpers;
 
-if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
+if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * URL helper
 * @author https://www.izi-mvc.com
 */
-class Url_helper
+class IZY_Url_helper
 {
-
-  public static function get_segment($key = 0)
+  public function __construct()
   {
-    $k = (int) $key;
-    $segments = self::get_segments();
-    return (count($segments) >= ($k + 1)) && ($segments[$k] != '') ? $segments[$k] : NULL;
+
   }
 
-  public static function get_segments()
-  {
-    return explode('/', \core\libraries\IZI_Url::get_url());
-  }
-
-  public static function check_queries($rules)
+  public function check_queries($rules)
   {
     // Copie des variables $_GET
-    $q = \core\libraries\IZI_Url::get_queries();
+    $q = get_instance()->url->queries;
 
     // Stockage de l'ordre correct des variables
     $vars_order = array_flip(array_keys($rules));
@@ -128,26 +120,35 @@ class Url_helper
     if(http_build_query($q) != $_SERVER['QUERY_STRING'])
     {
       // On recharge la page
-      $url = self::current_url('?' . http_build_query($q));
-      \core\libraries\IZI_Http::redirect($url);
+      $url = $this->current_url() . '?' . http_build_query($q);
+      get_instance()->http->redirect($url);
     }
   }
 
-  public static function current_url($path = '')
+  public function current_url($path = '')
   {
-    $url =  \core\libraries\IZI_Url::get_url();
     $path = (gettype($path) == 'array') && count($path) > 0 ? implode('/', $path) : $path;
-    $url .= ($path != '' ?  '/' . $path : '');
+    $url = get_instance()->url->request . ($path != '' ?  '/' . $path : '');
 
-    return self::site_url($url);
+    return $this->site_url($url);
   }
 
-  public static function site_url($path = '')
+  public function segment($key = 0)
   {
-    $protocol = \core\libraries\IZI_Url::get_protocol();
-    $host = \core\libraries\IZI_Url::get_host();
+    $k = (int) $key;
+    $segments = $this->segments();
+    return (count($segments) >= ($k + 1)) && ($segments[$k] != '') ? $segments[$k] : NULL;
+  }
+
+  public function segments()
+  {
+    return explode('/', get_instance()->url->request);
+  }
+
+  public function site_url($path = '')
+  {
     $url = (gettype($path) == 'array') && (count($path) != 0) ? implode('/', $path) : $path;
 
-    return $protocol . '://'. $host . ($path != '' ?  '/' . $path : '');
+    return get_instance()->url->protocol . '://'. get_instance()->url->host . ($path != '' ?  '/' . $path : '');
   }
 }
