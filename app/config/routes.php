@@ -1,6 +1,6 @@
 <?php
 
-if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
+if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /* URI ROUTING
 * Rewrite URI requests to specific controller.

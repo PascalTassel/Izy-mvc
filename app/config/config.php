@@ -1,9 +1,10 @@
 <?php
 
-if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
+if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 // Core
-$config['host']	      = '';   // www.example.com
-$config['hooks']      = [];   // Enabled hooks
-$config['components'] = [];   // Components settings
-$config['db']         = [];   // Database settings
+$config['host']	                  = '';   // www.example.com
+$config['hooks']                  = [];   // Enabled hooks
+$config['autoload']['helpers']    = ['Url_helper'];
+$config['libraries']              = [];   // Libraries settings
+$config['db']                     = [];   // Database settings
