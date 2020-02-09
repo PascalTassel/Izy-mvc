@@ -2,9 +2,9 @@
 
 namespace app\controllers;
 
-if(!defined('IZI')) die('DIRECT ACCESS FORBIDDEN');
+if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
-class Welcome extends \core\libraries\IZI_Controller
+class Welcome extends \core\system\IZY_Controller
 {
 
   public function __construct()
@@ -18,6 +18,6 @@ class Welcome extends \core\libraries\IZI_Controller
   public static function index()
   {
     // View
-    \core\libraries\IZI_Output::set_view('welcome');
+    $this->output->view('welcome');
   }
 }
