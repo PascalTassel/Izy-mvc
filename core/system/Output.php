@@ -110,28 +110,22 @@ class IZY_Output
 			// Get layout keys as vars
 			extract(self::$_layout);
 
-			try
-	    {
-	      if(!is_file(APP_PATH . self::$_layout['path'] . '.php'))
-	      {
-	        throw new IZI_Exception('Layout ' . APP_PATH . self::$_layout['path'] . '.php not found.');
-	      }
-		    // Launch cache
-		    ob_start();
+			if(!is_file(APP_PATH . self::$_layout['path'] . '.php'))
+      {
+        echo 'Unable to locate ' . APP_PATH . self::$_layout['path'] . '.php.';
+				die();
+      }
+	    // Launch cache
+	    ob_start();
 
-		    // Display layout
-		    include(APP_PATH . self::$_layout['path'] . '.php');
+	    // Display layout
+	    include(APP_PATH . self::$_layout['path'] . '.php');
 
-		    // Get HTML
-		    self::$_output = ob_get_contents();
+	    // Get HTML
+	    self::$_output = ob_get_contents();
 
-				// Close cache
-				ob_end_clean();
-	    }
-	    catch (IZI_Exception $e)
-	    {
-	      die($e);
-	    }
+			// Close cache
+			ob_end_clean();
 		}
 
 		// HTML made with PHP, no cache
