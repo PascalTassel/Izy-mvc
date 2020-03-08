@@ -15,7 +15,7 @@ class Welcome extends \core\system\IZY_Controller
   /**
   * Display welcome view
   */
-  public static function index()
+  public function index()
   {
     // View
     $this->output->view('welcome');
