@@ -81,7 +81,7 @@ if(!function_exists('load_class'))
 		$name = FALSE;
 		$namespaces = [
 			APP_PATH => str_replace([DIR_PATH, '/'], ['', '\\'], APP_PATH) . $directory . '\\',
-			DIR_PATH . 'core/' => 'core\\' . $directory . '\\'
+			DIR_PATH . 'core/' => 'core\\' . $directory . '\\IZY_'
 		];
 
 		// Look for the class first in the local application/libraries folder
@@ -90,14 +90,14 @@ if(!function_exists('load_class'))
 		{
 			if(file_exists($path . $directory . '/' . $class . '.php'))
 			{
-				if(class_exists($namespace . 'IZY_' . $class))
+				if(class_exists($namespace . $class))
 				{
-					$name = $namespace . 'IZY_' . $class;
+					$name = $namespace . $class;
 					break;
 				}
 			}
 		}
-
+		
 		// Is the request a class extension? If so we load it too
 		if($name !== FALSE)
 		{
