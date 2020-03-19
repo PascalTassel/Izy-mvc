@@ -71,7 +71,7 @@ class IZY
 			$class = new $response_controller();
 
 			get_instance()->{'controller'} = $class;
-			
+
 			call_user_func_array(array($class, $this->router->method), $this->router->args);
 
 			// Post controller hook
