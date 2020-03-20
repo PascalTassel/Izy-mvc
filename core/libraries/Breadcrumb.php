@@ -17,10 +17,6 @@ class IZY_Breadcrumb extends IZY_Library
   {
     // Get config settings
     parent::__construct('Breadcrumb');
-
-    // Add first
-    $this->first[1] = count($this->first) == 2 ? $this->first[1] : get_instance()->url_helper->site_url();
-    $this->add_first($this->first[0], $this->first[1]);
   }
 
   /**
