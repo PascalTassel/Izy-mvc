@@ -10,8 +10,8 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Breadcrumb extends IZY_Library
 {
   // Default settings
-  public $segments = [];      // Breadcrumb segments
-  public $first = [];         // Default first segment
+  public $segments = [];            // Breadcrumb segments
+  public $first = ['Home'];         // Default first segment
 
   public function __construct(array $datas = [])
   {
@@ -19,10 +19,8 @@ class IZY_Breadcrumb extends IZY_Library
     parent::__construct('Breadcrumb');
 
     // Add first
-    if(count($this->first) == 2)
-    {
-      $this->add_segment($this->first[0], $this->first[1]);
-    }
+    $this->first[1] = count($this->first) == 2 ? $this->first[1] : get_instance()->url_helper->site_url();
+    $this->add_first($this->first[0], $this->first[1]);
   }
 
   /**
