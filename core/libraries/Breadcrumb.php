@@ -11,7 +11,6 @@ class IZY_Breadcrumb extends IZY_Library
 {
   // Default settings
   public $segments = [];            // Breadcrumb segments
-  public $first = ['Home'];         // Default first segment
 
   public function __construct(array $datas = [])
   {
