@@ -13,3 +13,4 @@ $config['autoload'] = [
 ];
 $config['libraries']              = [];   // Libraries settings
 $config['db']                     = [];   // Database settings
+$config['toto'] = '';
