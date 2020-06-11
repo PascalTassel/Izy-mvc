@@ -12,4 +12,4 @@ $config['autoload'] = [
   'libraries' => []
 ];
 $config['libraries']              = [];   // Libraries settings
-$config['db']                     = [];   // Database settings
+$config['databases']              = [];   // Database settings
