@@ -103,7 +103,7 @@ class IZY_Pagination
     protected function _set_base_url()
     {
         // Base url
-        self::$_base_url = get_instance()->url_helper->current_url();
+        self::$_base_url = get_instance()->url->request;
         
         // Query string
         self::$_query_string = http_build_query(get_instance()->url->queries, '', '&amp;');
