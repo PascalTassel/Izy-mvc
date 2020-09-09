@@ -1,6 +1,6 @@
 <?php
 
-// IZI
+// IZY
 define('IZY', TRUE);
 
 // DIRS
@@ -14,13 +14,13 @@ define('VIEWS_PATH', APP_PATH . 'views/');
 // AUTOLOADING
 spl_autoload_register(function ($class_name)
 {
-  $namespace = explode('\\', $class_name);
-  $class = str_replace('IZY_', '', array_pop($namespace));
-  $file = implode('/', $namespace) . '/' . $class . '.php';
-  if(is_file($file))
-	{
-    include_once $file;
-  }
+    $namespace = explode('\\', $class_name);
+    $class = str_replace('IZY_', '', array_pop($namespace));
+    $file = implode('/', $namespace) . '/' . $class . '.php';
+    if(is_file($file))
+    {
+        include_once $file;
+    }
 });
 
 $IZY =& core\Izy::get_instance();

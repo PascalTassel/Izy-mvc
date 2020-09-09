@@ -5,49 +5,37 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Pagination component
-* @author https://www.izi-mvc.com
+* @author https://www.izy-mvc.com
 */
-class IZY_Breadcrumb extends IZY_Library
+class IZY_Breadcrumb
 {
-  // Default settings
-  public $segments = [];            // Breadcrumb segments
+    // Default settings
+    public $segments = [];            // Breadcrumb segments
 
-  public function __construct(array $datas = [])
-  {
-    // Get config settings
-    parent::__construct('Breadcrumb');
-  }
+    public function __construct(array $settings)
+    {
+        // Settings
+        foreach($settings as $attribute => $value)
+        {
+            $this->$attribute = $value;
+        }
+    }
 
-  /**
-  * Add a segment in breadcrumb
-  * @param string $label Segment label
-  * @param string $url Segment url
-  */
-  public function first(string $label, string $url)
-  {
-    array_shift($this->segments);
-    reset($this->segments);
+    /**
+    * Add a segment in breadcrumb
+    * @param string $label Segment label
+    * @param string $url Segment url
+    */
+    public function add_segment(string $label, string $url = '')
+    {
+        $this->segments[$label] = $url;
+    }
 
-    $this->add_segment($label, $url);
-  }
-
-  /**
-  * Add a segment in breadcrumb
-  * @param string $label Segment label
-  * @param string $url Segment url
-  */
-  public function add_segment(string $label, string $url = '')
-  {
-    $this->segments[$label] = $url;
-  }
-
-  /**
-  * Add a segment in breadcrumb
-  * @param string $label Segment label
-  * @param string $url Segment url
-  */
-  public function get_segments()
-  {
-    return $this->segments;
-  }
+    /**
+    * Get breadcrumb's segments
+    */
+    public function get_segments()
+    {
+        return $this->segments;
+    }
 }
