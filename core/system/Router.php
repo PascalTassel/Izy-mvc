@@ -9,12 +9,12 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Router
 {
-    public $routes = [];                        // Routes (set in app/config/routes.php)
-    public $path;                               // Controller path
+    public $args = [];                          // Method arguments
     public $controller;                         // Controller name
     public $method = 'index';                   // Default method
-    public $args = [];                          // Method arguments
+    public $path;                               // Controller path
     public $response_code = '200';              // Route response code
+    public $routes = [];                        // Routes (set in $config['routes'])
 
     public function __construct($url)
     {
