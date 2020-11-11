@@ -38,21 +38,34 @@ class IZY
 
         // Autoload classes
         $autoload = get_config('autoload');
-
+        $autoload = (is_null($autoload) or (gettype($autoload) !== 'array')) ? [] : $autoload;
+        
         // Helpers
+        if(!isset($autoload['helpers']) or (gettype($autoload['helpers']) !== 'array'))
+        {
+            $autoload['helpers'] = [];
+        }
+        array_push($autoload['helpers'], 'Url_helper');
+        
         foreach($autoload['helpers'] as $helper)
         {
             load_class($helper, 'helpers');
         }
         // Libraries
-        foreach($autoload['libraries'] as $library => $args)
+        if(isset($autoload['libraries']) and gettype($autoload['libraries']) === 'array')
         {
-            load_class($library, 'libraries', $args);
+            foreach($autoload['libraries'] as $library => $args)
+            {
+                load_class($library, 'libraries', $args);
+            }
         }
         // Models
-        foreach($autoload['models'] as $model)
+        if(isset($autoload['models']) and gettype($autoload['models']) === 'array')
         {
-            load_model($model);
+            foreach($autoload['models'] as $model)
+            {
+                load_model($model);
+            }
         }
 
         // Pre controller hook
