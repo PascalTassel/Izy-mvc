@@ -9,9 +9,16 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Output
 {
-    private static $_output	= '';           // Response content
-    private static $_layout = [];           // Layout datas
-    public $canonicals = [];                // Canonicals metas
+    private static $_output	= '';                   // Response content
+    private static $_time_taken = 0;                // Time load
+    private static $_start_time;                    // Init time load
+    private static $_layout = [];                   // Layout datas
+    public $canonicals = [];                        // Canonicals metas
+    
+    public function __construct($response_controller = '')
+    {
+        self::$_start_time = microtime(TRUE);
+    }
 
     /**
     * Add content to output
@@ -91,6 +98,22 @@ class IZY_Output
     }
 
     /**
+    * Get output length
+    */
+    public function get_length()
+    {
+        return ob_get_length();
+    }
+
+    /**
+    * Get output time loaded
+    */
+    public function get_time()
+    {
+        return self::$_time_taken;
+    }
+
+    /**
     * Display view
     * @return string Output HTML
     */
@@ -98,15 +121,19 @@ class IZY_Output
     {
         if(isset(self::$_layout['path']))
         {
-            // Get layout keys as vars
-            extract(self::$_layout);
-
             if(!is_file(APP_PATH . self::$_layout['path'] . '.php'))
             {
                 die('Unable to locate ' . APP_PATH . self::$_layout['path'] . '.php.');
             }
+            
+            // Get layout keys as vars
+            extract(self::$_layout);
+            
             // Launch cache
             ob_start();
+            
+            // End time loading
+            self::$_time_taken = (microtime(TRUE) - self::$_start_time);
 
             // Display layout
             include(APP_PATH . self::$_layout['path'] . '.php');
@@ -116,6 +143,11 @@ class IZY_Output
 
             // Close cache
             ob_end_clean();
+        }
+        else
+        {
+            // End time loading
+            self::$_time_taken = (microtime(TRUE) - self::$_start_time);
         }
 
         // HTML made with PHP, no cache
