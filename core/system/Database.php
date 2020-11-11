@@ -9,7 +9,7 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Database
 {
-    private $_config;             // Settings (set in app/config/config.php)
+    private static $_config;      // Settings (set in app/config/config.php)
     private static $_is_loaded;   // Keep a trace of loaded databases
 
     public function __construct()
@@ -18,14 +18,17 @@ class IZY_Database
         $settings = get_config('databases');
         if(!is_null($settings))
         {
-            $this->_config = $settings;
+            self::$_config = $settings;
 
             // Autoload db connections
             $autoload = get_config('autoload');
-            foreach($autoload['databases'] as $db)
+            if(!is_null($autoload) and isset($autoload['databases']) and (gettype($autoload['databases']) === 'array')) 
             {
-                $var = strtolower($db);
-                $this->$var = $this->connect($db);
+                foreach($autoload['databases'] as $db)
+                {
+                    $var = strtolower($db);
+                    $this->$var = $this->connect($db);
+                }
             }
         }
     }
@@ -38,7 +41,7 @@ class IZY_Database
         }
 
         // Database settings
-        $db = $this->_config[$database];
+        $db = self::$_config[$database];
         
         try
         {
