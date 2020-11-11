@@ -17,7 +17,7 @@ class IZY_Url_helper
     public function check_queries($rules)
     {
         // Copie des variables $_GET
-        $q = get_instance()->url->queries;
+        $q = $this->get_queries();
 
         // Stockage de l'ordre correct des variables
         $vars_order = array_flip(array_keys($rules));
@@ -75,7 +75,7 @@ class IZY_Url_helper
                     }
                 }
                 // Valeur de type int
-                else if($rules[$name]['type'] === 'integer')
+                else if($rules[$name]['type'] === 'int')
                 {
                     $value = empty($value) ? 0 : $value;
                     $value = intval($value);
@@ -120,7 +120,7 @@ class IZY_Url_helper
         {
             // On recharge la page
             $url = $this->current_url() . '?' . http_build_query($q);
-            get_instance()->http->redirect($url);
+            get_instance()->http->redirect($url, TRUE, 301);
         }
     }
 
@@ -130,6 +130,17 @@ class IZY_Url_helper
         $url = get_instance()->url->request . ($path != '' ?  '/' . $path : '');
 
         return $this->site_url($url);
+    }
+
+    public function get_queries()
+    {
+        return get_instance()->url->queries;
+    }
+
+    public function query_string()
+    {
+        $queries = $this->get_queries;
+        return http_build_query($queries, '', '&amp;');
     }
 
     public function segment($key = 0)
