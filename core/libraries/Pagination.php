@@ -60,9 +60,19 @@ class IZY_Pagination
         return $this->_alias;
     }
     
+    public function get_count()
+    {
+        return $this->_count;
+    }
+    
     public function get_limit()
     {
         return $this->_limit;
+    }
+    
+    public function get_page()
+    {
+        return $this->_page;
     }
     
     public function get_range()
