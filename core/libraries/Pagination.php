@@ -30,7 +30,7 @@ class IZY_Pagination
             }
         }
         
-        $this->IZY =& $this->IZY;
+        $this->IZY =& get_instance();
     }
     
     public function set_alias(string $alias)
