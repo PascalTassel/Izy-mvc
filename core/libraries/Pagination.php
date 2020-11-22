@@ -9,15 +9,15 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Pagination
 {
-    public $alias = 'page';       // Var name in query url
-    public $limit = 20;           // Limit
-    public $range = 2;            // Nb prevs et nexts links in pagination
-    public $source = 'query';     // Datas reception mode url|query
-    protected $_page = 1;         // Current page
-    protected $_count = 1;        // Total pages
-    protected $_links = [];       // Pagination links
-    protected $_base_url;         // Base url of links
-    protected $_query_string;     // Request query string
+    protected $_alias = 'page';     // Var name in query url
+    protected $_limit = 20;         // Limit
+    protected $_range = 2;          // Nb prevs et nexts links in pagination
+    protected $_source = 'query';   // Datas reception mode url|query
+    protected $_page = 1;           // Current page
+    protected $_count = 1;          // Total pages
+    protected $_links = [];         // Pagination links
+    protected $_base_url;           // Base url of links
+    protected $_query_string;       // Request query string
 
     public function __construct(array $settings = [])
     {
@@ -70,6 +70,11 @@ class IZY_Pagination
         return $this->_limit;
     }
     
+    public function get_links()
+    {
+        return $this->_links;
+    }
+    
     public function get_page()
     {
         return $this->_page;
@@ -83,11 +88,6 @@ class IZY_Pagination
     public function get_source()
     {
         return $this->_source;
-    }
-    
-    public function get_links()
-    {
-        return $this->_links;
     }
 
     /**
@@ -104,7 +104,7 @@ class IZY_Pagination
         $this->_page = $page;
 
         // Count
-        $this->_count = ceil($total / $this->limit);
+        $this->_count = ceil($total / $this->_limit);
 
         // First
         $this->_links['first'] = ($this->_page - 1) > 1 ? ['page' => 1, 'url' => $this->_set_link(1)] : NULL;
@@ -119,7 +119,7 @@ class IZY_Pagination
         {
             $this->IZY->output->canonical('prev', $this->_set_link($page - 1));
 
-            $from = ($this->_page - $this->range) <= 0 ? 1 : $this->_page - $this->range;
+            $from = ($this->_page - $this->_range) <= 0 ? 1 : $this->_page - $this->_range;
             for($from; $from < $this->_page; $from ++)
             {
                 array_push($this->_links['prevs'], ['page' => $from, 'url' => $this->_set_link($from)]);
@@ -137,7 +137,7 @@ class IZY_Pagination
         {
             $this->IZY->output->canonical('next', $this->_set_link($page + 1));
 
-            $to = ($this->_page + $this->range) > $this->_count ? $this->_count : ($this->_page + $this->range);
+            $to = ($this->_page + $this->_range) > $this->_count ? $this->_count : ($this->_page + $this->_range);
             for($from = ($this->_page + 1); $from <= $to; $from ++)
             {
                 array_push($this->_links['nexts'], ['page' => $from, 'url' => $this->_set_link($from)]);
@@ -164,9 +164,9 @@ class IZY_Pagination
 
         // Get current page number
         // From Url
-        if($this->source == 'url')
+        if($this->_source == 'url')
         {
-            preg_match_all('/\/(' . $this->alias . '\/[0-9]+)/', $this->_base_url, $matches, PREG_SET_ORDER, 0);
+            preg_match_all('/\/(' . $this->_alias . '\/[0-9]+)/', $this->_base_url, $matches, PREG_SET_ORDER, 0);
 
             foreach($matches as $match)
             {
@@ -174,7 +174,7 @@ class IZY_Pagination
             }
 
             //Remove page and limit from url
-            $this->_base_url = preg_replace('/\/(' . $this->alias . '\/[0-9]+)/', '', $this->_base_url);
+            $this->_base_url = preg_replace('/\/(' . $this->_alias . '\/[0-9]+)/', '', $this->_base_url);
         }
         // From query
         else if($this->_query_string !== '')
@@ -182,10 +182,10 @@ class IZY_Pagination
             // Get queries
             $queries = $this->IZY->url->queries;
 
-            $this->_page = isset($queries[$this->alias]) ? (int) $queries[$this->alias] : $this->_page;
+            $this->_page = isset($queries[$this->_alias]) ? (int) $queries[$this->_alias] : $this->_page;
 
             //Remove page and limit from query
-            unset($queries[$this->alias]);
+            unset($queries[$this->_alias]);
             $this->_query_string = http_build_query($queries, '', '&amp;');
         }
     }
@@ -197,17 +197,17 @@ class IZY_Pagination
     */
     protected function _set_link($page_num)
     {
-        if($this->source == 'query')
+        if($this->_source == 'query')
         {
-            $link_url = $this->_base_url . ($page_num > 1 ? '?' . $this->alias . '=' . $page_num : '');
+            $link_url = $this->_base_url . ($page_num > 1 ? '?' . $this->_alias . '=' . $page_num : '');
             $link_url .= !empty($this->_query_string) ? ($page_num > 1 ? '&amp;' : '?') . $this->_query_string : '';
         }
         else
         {
-            $link_url = $this->_base_url . ($page_num > 1 ? '/' . $this->alias .'/' . $page_num : '');
+            $link_url = $this->_base_url . ($page_num > 1 ? '/' . $this->_alias .'/' . $page_num : '');
             $link_url .= !empty($this->_query_string) ? '?' . $this->_query_string : '';
         }
-
+        
         return $link_url;
     }
 }
