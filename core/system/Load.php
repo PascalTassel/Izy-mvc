@@ -26,21 +26,6 @@ class IZY_Load
     }
 
     /**
-    * Load a library
-    * @param string $helpers, separated by ","
-    * @return object Helper instance as IZY->*_helper
-    */
-    public function library($libraries = '')
-    {
-        $libraries = explode(',', str_replace(' ', '', $libraries));
-
-        foreach($libraries as $library)
-        {
-            $this->_load_class($library, 'libraries');
-        }
-    }
-
-    /**
     * Load a model
     * @param string $models, separated by ","
     * @return object Model instance as IZY->*_model
