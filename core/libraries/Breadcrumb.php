@@ -10,6 +10,7 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Breadcrumb
 {
     protected $_home = 'Home';  // Root label
+    protected $_root = '';      // Root url
     
     /**
     * Define settings
@@ -30,6 +31,12 @@ class IZY_Breadcrumb
         
         $this->segments = [];
         $this->IZY =& get_instance();
+        
+        if($this->_home !== '')
+        {
+            $this->_root = ($this->_root !== '') ? $this->_root : $this->IZY->url_helper->site_url();
+            $this->add_segment($this->_home, $this->_root);
+        }
     }
 
     /**
@@ -46,11 +53,7 @@ class IZY_Breadcrumb
     * Get breadcrumb's segments
     */
     public function get_segments()
-    {    
-        if((gettype($this->_home) === 'string') && ($this->_home !== ''))
-        {
-            $this->segments = array($this->_home => $this->IZY->url_helper->site_url()) + $this->segments;
-        }
+    {
         return $this->segments;
     }
 }
