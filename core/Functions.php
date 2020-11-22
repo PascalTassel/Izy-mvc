@@ -24,18 +24,9 @@ if(!function_exists('get_config_files'))
 
         if(empty($_config))
         {
-            if(!is_file(CONFIG_PATH . 'config.php'))
+            if(is_file(CONFIG_PATH . 'config.php'))
             {
-                echo 'Unable to locate ' . CONFIG_PATH . 'config.php.';
-                die;
-            }
-
-            include(CONFIG_PATH . 'config.php');
-
-            if(!isset($config))
-            {
-                echo 'Unable to locate $config in ' . CONFIG_PATH . 'config.php.';
-                die;
+                include(CONFIG_PATH . 'config.php');
             }
 
             // Customs config
@@ -45,6 +36,15 @@ if(!function_exists('get_config_files'))
                 {
                     include(CONFIG_PATH . $file);
                 }
+            }
+
+            if(!isset($config))
+            {
+                die('Unable to locate $config[].');
+            }
+            else if(!is_file(CONFIG_PATH . 'config.php'))
+            {
+                die('Unable to locate ' . CONFIG_PATH . 'config.php.');
             }
 
             $_config = $config;

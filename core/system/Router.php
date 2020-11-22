@@ -19,15 +19,9 @@ class IZY_Router
     public function __construct($url)
     {
         // Routes
-        if(!is_file(CONFIG_PATH . 'routes.php'))
+        if(is_file(CONFIG_PATH . 'routes.php'))
         {
-            die('Unable to locate ' . CONFIG_PATH . 'routes.php.');
-        }
-        include(CONFIG_PATH . 'routes.php');
-
-        if(empty($routes))
-        {
-            die('$routes is empty.');
+            include(CONFIG_PATH . 'routes.php');
         }
 
         // Custom routes
@@ -39,14 +33,21 @@ class IZY_Router
             }
         }
 
-        // Undefined 404_url route
-        if(!isset($routes['404_url']))
+        if(!isset($routes))
+        {
+            die('Unable to locate $routes[].');
+        }
+        else if(!is_file(CONFIG_PATH . 'routes.php'))
+        {
+            die('Unable to locate ' . CONFIG_PATH . 'routes.php.');
+        }
+        // 404 url ?
+        else if(!isset($routes['404_url']))
         {
             die('$routes[\'404_url\'] is undefined.');
         }
-
-        // Index url
-        if(!isset($routes['index']))
+        // Index url ?
+        else if(!isset($routes['index']))
         {
             die('$routes[\'index\'] is undefined.');
         }
