@@ -40,11 +40,12 @@ if(!function_exists('get_config_files'))
 
             if(!isset($config))
             {
+                if(!is_file(CONFIG_PATH . 'config.php'))
+                {
+                    die('Unable to locate ' . CONFIG_PATH . 'config.php.');
+                }
+                
                 die('Unable to locate $config[].');
-            }
-            else if(!is_file(CONFIG_PATH . 'config.php'))
-            {
-                die('Unable to locate ' . CONFIG_PATH . 'config.php.');
             }
 
             $_config = $config;

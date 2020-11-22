@@ -35,11 +35,12 @@ class IZY_Router
 
         if(!isset($routes))
         {
+            if(!is_file(CONFIG_PATH . 'routes.php'))
+            {
+                die('Unable to locate ' . CONFIG_PATH . 'routes.php.');
+            }
+            
             die('Unable to locate $routes[].');
-        }
-        else if(!is_file(CONFIG_PATH . 'routes.php'))
-        {
-            die('Unable to locate ' . CONFIG_PATH . 'routes.php.');
         }
         // 404 url ?
         else if(!isset($routes['404_url']))
