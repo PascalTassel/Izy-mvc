@@ -51,14 +51,6 @@ class IZY
         {
             load_class($helper, 'helpers');
         }
-        // Libraries
-        if(isset($autoload['libraries']) and gettype($autoload['libraries']) === 'array')
-        {
-            foreach($autoload['libraries'] as $library => $args)
-            {
-                load_class($library, 'libraries', $args);
-            }
-        }
         // Models
         if(isset($autoload['models']) and gettype($autoload['models']) === 'array')
         {

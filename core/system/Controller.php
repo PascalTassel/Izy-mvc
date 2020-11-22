@@ -15,7 +15,7 @@ class IZY_Controller
     {
         self::$_instance =& $this;
 
-        // Assign [system, helpers, libraries] classses objects to local variables
+        // Assign [system, helpers] classses objects to local variables
         foreach(system_loaded('system') as $var => $system_class)
         {
             if($var != 'controller')
@@ -26,10 +26,6 @@ class IZY_Controller
         foreach(system_loaded('helpers') as $var => $system_class)
         {
             $this->$var =& load_class($system_class, 'helpers');
-        }
-        foreach(system_loaded('libraries') as $var => $system_class)
-        {
-            $this->$var =& load_class($system_class, 'libraries');
         }
 
         // Assign models to local variables

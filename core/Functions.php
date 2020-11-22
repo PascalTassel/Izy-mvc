@@ -218,7 +218,6 @@ if ( ! function_exists('system_loaded'))
     {
         static $_is_loaded = [
             'helpers' => [],
-            'libraries' => [],
             'system' => []
         ];
 
