@@ -7,6 +7,15 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 // Global functions
 require_once(DIR_PATH . 'core/Functions.php');
 
+// Autoloading
+$autoloading = get_config('autoloading');
+if ( !is_null($autoloading) ) {
+    
+    foreach ($autoloading as $autoload) {
+        require_once(DIR_PATH . $autoload);
+    }
+}
+
 /**
 * IZY Object
 * @author https://www.izi-mvc.com
