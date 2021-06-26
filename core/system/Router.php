@@ -97,7 +97,13 @@ class IZY_Router
     */
     public function set_path($url)
     {
-        $route = $this->_get_route($url);
+        static $_is_literal = true;
+        
+        if ($_is_literal) {
+            $route = $url;
+        } else {
+            $route = $this->_get_route($url);
+        }
 
         // Namespace
         $namespace = '\\' . str_replace([DIR_PATH, '/'], ['', '\\'], CONTROLLERS_PATH);
@@ -154,6 +160,11 @@ class IZY_Router
                 // Path
                 $this->path .= implode('/', $this->args);
             }
+        }
+        elseif($_is_literal)
+        {
+            $_is_literal = false;
+            $this->set_path($url);
         }
         elseif($this->response_code != '404')
         {
