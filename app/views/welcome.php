@@ -20,7 +20,7 @@ $IZY =& get_instance();
                 
                 <p>Pour modifier cette page, éditez le fichier <strong><?php echo $_SERVER['HTTP_HOST'] . '/app/views/welcome.php'; ?></strong>.</p>
                 
-                <p>Pour en savoir plus, consultez le <a href="https://www.izy-mvc.com">guide de l'utilisateur d'Izy-mvc</a>.</p>
+                <p>Pour en savoir plus, consultez le <a href="https://www.izy-mvc.com/userguide">guide de l'utilisateur d'Izy-mvc</a>.</p>
             </section>
         </main>
         <footer>
@@ -47,7 +47,9 @@ $IZY =& get_instance();
             }
             header {
                 position: fixed;
-                width: 100%;
+                top: 0;
+                right: 0;
+                left: 0;
                 padding: .5rem;
                 background-color: #181826;
             }
@@ -61,6 +63,7 @@ $IZY =& get_instance();
             }
             section {
                 max-width: 50rem;
+                margin: 1rem;
                 padding: 1rem;
                 border: 1px solid #ffd5f8;
                 border-radius: .25rem;
