@@ -5,7 +5,7 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Load a controller at specific moment
-* @author https://www.izy-mvc.com
+* @author Pascal Tassel : https://www.izy-mvc.com
 */
 class IZY_Hooks
 {

@@ -19,9 +19,20 @@ class IZY_Router
     public function __construct($url)
     {
         // Routes
-        if(is_file(CONFIG_PATH . 'routes.php'))
-        {
+        try {
+            // Isset routes file ?
+            if (!is_file(CONFIG_PATH . 'routes.php'))
+            {
+                throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'routes.php introuvable.');
+                die;
+            }
+            
+            // Include routes file
             include(CONFIG_PATH . 'routes.php');
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
         }
 
         // Custom routes
@@ -32,28 +43,33 @@ class IZY_Router
                 include(CONFIG_PATH . $route);
             }
         }
-
-        if(!isset($routes))
-        {
-            if(!is_file(CONFIG_PATH . 'routes.php'))
+        
+        try {
+            // Isset $routes ?
+            if (!isset($routes))
             {
-                die('Unable to locate ' . CONFIG_PATH . 'routes.php.');
+                throw new \core\system\IZY_Exception('Tableau $routes non défini dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                die;
             }
-            
-            die('Unable to locate $routes[].');
-        }
-        // 404 url ?
-        else if(!isset($routes['404_url']))
-        {
-            die('$routes[\'404_url\'] is undefined.');
-        }
-        // Index url ?
-        else if(!isset($routes['index']))
-        {
-            die('$routes[\'index\'] is undefined.');
-        }
+            // 404 url ?
+            else if (!isset($routes['404_url']))
+            {
+                throw new \core\system\IZY_Exception('$routes[\'404_url\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                die;
+            }
+            // Index url ?
+            else if (!isset($routes['index']))
+            {
+                throw new \core\system\IZY_Exception('$routes[\'index\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                die;
+            }
 
-        $this->routes = $routes;
+            $this->routes = $routes;
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
 
         // Index url if url empty
         $url = $url == '' ? $this->routes['index'] : $url;

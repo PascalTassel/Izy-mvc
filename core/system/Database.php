@@ -18,16 +18,40 @@ class IZY_Database
         $settings = get_config('databases');
         if(!is_null($settings))
         {
-            self::$_config = $settings;
+            
+            try {
+                if (gettype($settings) != 'array')
+                {
+                    throw new \core\system\IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
+                    die;
+                }
+                self::$_config = $settings;
+            }
+            catch (\core\system\IZY_Exception $e)
+            {
+              echo $e;
+            }
 
             // Autoload db connections
             $autoload = get_config('autoload');
-            if(!is_null($autoload) and isset($autoload['databases']) and (gettype($autoload['databases']) === 'array')) 
+            if (!is_null($autoload) and isset($autoload['databases'])) 
             {
-                foreach($autoload['databases'] as $db)
+                try {
+                    if (gettype($autoload['databases']) !== 'array')
+                    {
+                        throw new \core\system\IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
+                        die;
+                    }
+                    
+                    foreach($autoload['databases'] as $db)
+                    {
+                        $var = strtolower($db);
+                        $this->$var = $this->connect($db);
+                    }
+                }
+                catch (\core\system\IZY_Exception $e)
                 {
-                    $var = strtolower($db);
-                    $this->$var = $this->connect($db);
+                  echo $e;
                 }
             }
         }

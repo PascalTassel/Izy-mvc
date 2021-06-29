@@ -18,7 +18,7 @@ if ( !is_null($autoloading) ) {
 
 /**
 * IZY Object
-* @author https://www.izi-mvc.com
+* @author Pascal Tassel : https://www.izy-mvc.com
 */
 class IZY
 {

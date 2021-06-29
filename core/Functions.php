@@ -24,31 +24,45 @@ if(!function_exists('get_config_files'))
 
         if(empty($_config))
         {
-            if(is_file(CONFIG_PATH . 'config.php'))
-            {
+            try {
+                // Isset config file ?
+                if (!is_file(CONFIG_PATH . 'config.php'))
+                {
+                    throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'config.php introuvable.');
+                    die;
+                }
+                
+                // Include config file
                 include(CONFIG_PATH . 'config.php');
             }
-
-            // Customs config
-            foreach(scandir(CONFIG_PATH) as $file)
+            catch (\core\system\IZY_Exception $e)
             {
-                if(preg_match('#_config.php$#', $file))
+              echo $e;
+            }
+
+            // Include customs config files
+            foreach (scandir(CONFIG_PATH) as $file)
+            {
+                if (preg_match('#_config.php$#', $file))
                 {
                     include(CONFIG_PATH . $file);
                 }
             }
-
-            if(!isset($config))
-            {
-                if(!is_file(CONFIG_PATH . 'config.php'))
+            
+            try {
+                // Isset $config ?
+                if (!isset($config))
                 {
-                    die('Unable to locate ' . CONFIG_PATH . 'config.php.');
+                    throw new \core\system\IZY_Exception('Tableau $config non défini dans le fichier ' . CONFIG_PATH . 'config.php.');
+                    die;
                 }
                 
-                die('Unable to locate $config[].');
+                $_config = $config;
             }
-
-            $_config = $config;
+            catch (\core\system\IZY_Exception $e)
+            {
+              echo $e;
+            }
         }
 
         return $_config;
@@ -112,19 +126,22 @@ if(!function_exists('load_class'))
         {
             $name = $namespaces[APP_PATH] . $class;
         }
+        
+        try {
+            // Did we find the class?
+            if ($name === FALSE)
+            {
+                throw new \core\system\IZY_Exception('Fichier ' . APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php introuvable.');
+                die;
+            }
 
-        // Did we find the class?
-        if($name === FALSE)
-        {
-            // Note: We use exit() rather than show_error() in order to avoid a
-            // self-referencing loop with the Exceptions class
-            //set_status_header(503);
-            echo 'Unable to locate the specified class: ' . $class . '.php';
-            exit(5); // EXIT_UNK_CLASS
+            // Keep track of class loaded
+            system_loaded($directory, $class);
         }
-
-        // Keep track of class loaded
-        system_loaded($directory, $class);
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
 
         $_classes[$class] = isset($param)
             ? new $name($param)
@@ -167,16 +184,22 @@ if(!function_exists('load_model'))
         {
             $name = $class;
         }
+        
+        try {
+            // Did we find the model?
+            if ($name === FALSE)
+            {
+                throw new \core\system\IZY_Exception('Modèle ' . MODELS_PATH . $model . '.php introuvable.');
+                die;
+            }
 
-        // Did we find the model?
-        if($name === FALSE)
-        {
-            echo 'Unable to locate the specified model: ' . $model . '.php';
-            exit(5); // EXIT_UNK_CLASS
+            // Keep track of model loaded
+            models_loaded($model);
         }
-
-        // Keep track of model loaded
-        models_loaded($model);
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
 
         $_models[$model] = new $name();
 
@@ -235,31 +258,34 @@ if( ! function_exists('show_404'))
 {
     function show_404()
     {
+        // Get instance
+        $IZY =& get_instance();
+        
         // 404 header
-        get_instance()->http->response_code('404');
+        $IZY->http->response_code('404');
 
-        $routes = get_instance()->router->routes;
+        $routes = $IZY->router->routes;
 
         if($routes['404_url'] != '')
         {
-            get_instance()->router->set_path($routes['404_url']);
+            $IZY->router->set_path($routes['404_url']);
 
-            $controller_404 = get_instance()->router->controller;
+            $controller_404 = $IZY->router->controller;
 
             if(!empty($controller_404))
             {
-                // Empty current output
-                get_instance()->output->empty();
+                // Empty output content
+                $IZY->output->empty();
 
                 // Call controller
                 $class = new $controller_404();
-                call_user_func_array(array($class, get_instance()->router->method), get_instance()->router->args);
+                call_user_func_array(array($class, $IZY->router->method), $IZY->router->args);
 
                 // Unset controller
                 unset($class);
 
                 // Output
-                get_instance()->output->_display();
+                $IZY->output->_display();
             }
         }
 
@@ -271,28 +297,39 @@ if( ! function_exists('view'))
 {
     function view($path, $datas = [])
     {
+        // Get instance
+        $IZY =& get_instance();
+        
         // Convert datas array keys to vars
-        if(!empty($datas))
+        if (!empty($datas))
         {
             extract($datas);
         }
-
-        // Include view
-        if(!is_file(VIEWS_PATH . $path . '.php'))
-        {
-            echo 'View ' . VIEWS_PATH . $path . '.php not found.';
-            die;
-        }
+        
         // Launch cache
         ob_start();
 
         // Pre_view hook
-        get_instance()->hooks->set_hook('pre_view');
+        $IZY->hooks->set_hook('pre_view');
+        
+        try {
+            // View exist ?
+            if (!is_file(VIEWS_PATH . $path . '.php'))
+            {
+                throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.');
+                die;
+            }
 
-        include(VIEWS_PATH . $path . '.php');
+            // Include view
+            include(VIEWS_PATH . $path . '.php');
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
 
         // Post_view hook
-        get_instance()->hooks->set_hook('post_view');
+        $IZY->hooks->set_hook('post_view');
 
         // Content view
         $content = ob_get_contents();

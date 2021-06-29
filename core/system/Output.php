@@ -36,12 +36,20 @@ class IZY_Output
     */
     public function canonical($rel, $link)
     {
-        if(!in_array($rel, ['prev', 'canonical', 'next']))
-        {
-            die($rel . ' is not an available attribute for canonical meta tag.');
-        }
+        try {
+            // Isset $config ?
+            if (!in_array($rel, ['prev', 'canonical', 'next']))
+            {
+                throw new \core\system\IZY_Exception($rel . ' n\'est pas un attribut canonical valide.');
+                die;
+            }
 
-        $this->canonicals[$rel] = $link;
+            $this->canonicals[$rel] = $link;
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
 
     /**
@@ -59,16 +67,24 @@ class IZY_Output
     */
     public function layout($datas)
     {
-        if(gettype($datas) != 'array')
-        {
-            die('Argument of set_layout() must be an array.');
-        }
-        elseif(isset($datas['path']) && gettype($datas['path']) != 'string')
-        {
-            die('Layout path must be a string.');
-        }
+        try {
+            if (gettype($datas) != 'array')
+            {
+                throw new \core\system\IZY_Exception('L\'argument passé au layout doit être un tableau associatif.');
+                die;
+            }
+            elseif (isset($datas['path']) && gettype($datas['path']) != 'string')
+            {
+                throw new \core\system\IZY_Exception('Le chemin du layout doit être une chaîne de caractères.');
+                die;
+            }
 
-        self::$_layout = array_merge(self::$_layout, $datas);
+            self::$_layout = array_merge(self::$_layout, $datas);
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
 
     /**
@@ -121,13 +137,20 @@ class IZY_Output
     {
         if(isset(self::$_layout['path']))
         {
-            if(!is_file(APP_PATH . self::$_layout['path'] . '.php'))
-            {
-                die('Unable to locate ' . APP_PATH . self::$_layout['path'] . '.php.');
+            try {
+                if (!is_file(APP_PATH . self::$_layout['path'] . '.php'))
+                {
+                    throw new \core\system\IZY_Exception('Layout ' . APP_PATH . self::$_layout['path'] . '.php introuvable.');
+                    die;
+                }
+                
+                // Get layout keys as vars
+                extract(self::$_layout);
             }
-            
-            // Get layout keys as vars
-            extract(self::$_layout);
+            catch (\core\system\IZY_Exception $e)
+            {
+              echo $e;
+            }
             
             // Launch cache
             ob_start();

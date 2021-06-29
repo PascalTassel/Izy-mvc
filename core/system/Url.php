@@ -4,8 +4,8 @@ namespace core\system;
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
-* Url properties
-* @author https://www.izy-mvc.com
+* Get URL and queries
+* @author Pascal Tassel : https://www.izy-mvc.com
 */
 class IZY_Url
 {
@@ -34,12 +34,18 @@ class IZY_Url
         }
 
         // Host
-        if(is_null(get_config('host')) || empty(get_config('host')))
-        {
-            die('\$config[\'host\'] is not defined.');
+        try {
+            if(is_null(get_config('host')) || empty(get_config('host')))
+            {
+                throw new IZY_Exception('$config[\'host\'] non définie dans le fichier ' . CONFIG_PATH . 'config.php.');
+                die;
+            }
+            $this->host = strtolower(get_config('host'));
         }
-
-        $this->host = strtolower(get_config('host'));
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
 
         $uri = ltrim(str_replace($this->host, '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
 
