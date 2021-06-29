@@ -11,18 +11,19 @@ define('CONTROLLERS_PATH', APP_PATH . 'controllers' . DIRECTORY_SEPARATOR);
 define('MODELS_PATH', APP_PATH . 'models' . DIRECTORY_SEPARATOR);
 define('VIEWS_PATH', APP_PATH . 'views' . DIRECTORY_SEPARATOR);
 
-// AUTOLOADING
+// IZY CLASSES AUTOLOADING
 spl_autoload_register(function ($class_name)
 {
     $namespace = explode('\\', $class_name);
     $class = str_replace('IZY_', '', array_pop($namespace));
     $file = implode('/', $namespace) . '/' . $class . '.php';
-    if(is_file($file))
+    if (is_file($file))
     {
         include_once $file;
     }
 });
 
+// IZY INSTANCE
 $IZY =& core\Izy::get_instance();
 
 unset($IZY);
