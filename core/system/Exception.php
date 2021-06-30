@@ -41,6 +41,49 @@ class IZY_Exception extends \ErrorException
     }
     
     private function _display() {
+        $output = '
+        <section id="exception-msg">
+            <h1>' . $this->type . ' : exception rencontrée</h1>
+            <div>' . $this->message . '</div>
+            <small>Exception attrapée dans le fichier : ' . $this->file . '</strong>, ligne ' . $this->line . '</small>.
+        </section>
+                
+        <style type="text/css">
+        #exception-msg {
+            font-family: sans-serif;
+            font-size: 16px;
+            color: #ddd;
+            max-width: 60rem;
+            margin: 1rem auto;
+            padding: 1rem;
+            border-radius: .25rem;
+            box-shadow: 0 0 10px 10px rgb(0 0 0 / 10%);
+            background-color: #990b14;
+            text-align: center;
+        }
+        #exception-msg a {
+            color: #e14eca;
+        }
+        #exception-msg a:hover,
+        #exception-msg a:focus {
+            color: #ad3d9c;
+        }
+        #exception-msg h1 {
+            margin-top: 0;
+            color: #fff;
+            text-shadow: 1px 1px 0 black;
+        }
+        #exception-msg div {
+            margin: 2rem 0;
+            font-size: 1.2rem;
+        }
+        </style>';
+        
+        return ($this->code === 0) ? $this->_wrap($output) : $output;
+    }
+    
+    private function _wrap($message)
+    {
         return '
         <!DOCTYPE html>
         <html>
@@ -55,66 +98,46 @@ class IZY_Exception extends \ErrorException
                     </a>
                     <a href="https://www.izy-mvc.com/userguide">Guide de l\'utilisateur</a>
                 </header>
-                <main>
-                    <section>
-                        <h1>' . $this->type . ' : exception rencontrée</h1>
-                        <div>' . $this->message . '</div>
-                        <small>Exception attrapée dans le fichier : ' . $this->file . '</strong>, ligne ' . $this->line . '</small>.
-                    </section>
-                </main>
-                
+                <main>' . $this->message . '</main>
                 <style type="text/css">
-                    html {
-                        height: 100%;
-                    }
-                    body {
-                        height: 100%;
-                        font-family: sans-serif;
-                        background-color: #181826;
-                        color: #a5a5ac;
-                        margin: 0;
-                    }
-                    a {
-                        color: #e14eca;
-                    }
-                    a:hover,
-                    a:focus {
-                        color: #ad3d9c;
-                    }
-                    h1 {
-                        color: #fff;
-                        margin-top: 0;
-                    }
-                    header {
-                        position: fixed;
-                        top: 0;
-                        right: 0;
-                        left: 0;
-                        padding: .5rem;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        background-color: rgb(0 0 0 / 20%);
-                    }
-                    main {
-                        display: flex;
-                        height: 100%;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                    section {
-                        max-width: 50rem;
-                        margin: 1rem;
-                        padding: 1rem;
-                        border-radius: .25rem;
-                        box-shadow: 0 0 10px 10px rgb(0 0 0 / 10%);
-                        background-color: #32324e;
-                        text-align: center;
-                    }
-                    section div {
-                        margin: 2rem 0;
-                        font-size: 1.2rem;
-                    }
+                html {
+                    height: 100%;
+                }
+                body {
+                    height: 100%;
+                    font-family: sans-serif;
+                    font-size: 16px;
+                    background-color: #181826;
+                    color: #a5a5ac;
+                    margin: 0;
+                }
+                a {
+                    color: #e14eca;
+                }
+                a:hover,
+                a:focus {
+                    color: #ad3d9c;
+                }
+                h1 {
+                    color: #fff;
+                    margin-top: 0;
+                }
+                header {
+                    position: fixed;
+                    top: 0;
+                    right: 0;
+                    left: 0;
+                    padding: .5rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background-color: rgb(0 0 0 / 20%);
+                }
+                main {
+                    display: flex;
+                    height: 100%;
+                    align-items: center;
+                }
                 </style>
             </body>
         </html>';

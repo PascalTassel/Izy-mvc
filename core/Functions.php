@@ -316,7 +316,7 @@ if( ! function_exists('view'))
             // View exist ?
             if (!is_file(VIEWS_PATH . $path . '.php'))
             {
-                throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.');
+                throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.', 1);
                 die;
             }
 

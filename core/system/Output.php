@@ -70,12 +70,12 @@ class IZY_Output
         try {
             if (gettype($datas) != 'array')
             {
-                throw new \core\system\IZY_Exception('L\'argument passé au layout doit être un tableau associatif.');
+                throw new \core\system\IZY_Exception('L\'argument passé au layout doit être un tableau associatif.', 1);
                 die;
             }
             elseif (isset($datas['path']) && gettype($datas['path']) != 'string')
             {
-                throw new \core\system\IZY_Exception('Le chemin du layout doit être une chaîne de caractères.');
+                throw new \core\system\IZY_Exception('Le chemin du layout doit être une chaîne de caractères.', 1);
                 die;
             }
 
