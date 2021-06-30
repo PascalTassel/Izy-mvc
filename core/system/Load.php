@@ -21,7 +21,7 @@ class IZY_Load
 
         foreach($helpers as $helper)
         {
-            $this->_load_class($helper, 'helpers');
+            $this->_load_class(str_replace('/', DIRECTORY_SEPARATOR, $helper), 'helpers');
         }
     }
 
@@ -36,7 +36,7 @@ class IZY_Load
 
         foreach($models as $model)
         {
-            $class =& load_model($model);
+            $class =& load_model(str_replace('/', DIRECTORY_SEPARATOR, $model));
             $var = str_replace('/', '_', strtolower($model));
 
             get_instance()->$var = $class;

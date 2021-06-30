@@ -95,15 +95,15 @@ if(!function_exists('load_class'))
         // then in the native system/folders
         $name = FALSE;
         $namespaces = [
-            APP_PATH => str_replace([DIR_PATH, '/'], ['', '\\'], APP_PATH) . $directory . '\\',
-            DIR_PATH . 'core/' => 'core\\' . $directory . '\\IZY_'
+            APP_PATH => str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], APP_PATH) . $directory . '\\',
+            DIR_PATH . 'core' . DIRECTORY_SEPARATOR => 'core\\' . $directory . '\\IZY_'
         ];
 
         // Look for the class first in the local application/libraries folder
         // then in the native system/libraries folder
         foreach($namespaces as $path => $namespace)
         {
-            if(file_exists($path . $directory . '/' . $class . '.php'))
+            if(file_exists($path . $directory . DIRECTORY_SEPARATOR . $class . '.php'))
             {
                 if(class_exists($namespace . $class))
                 {
@@ -116,13 +116,13 @@ if(!function_exists('load_class'))
         // Is the request a class extension? If so we load it too
         if($name !== FALSE)
         {
-            if(file_exists(APP_PATH . $directory . '/MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
+            if(file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . 'MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
             {
                 $name = $namespaces[APP_PATH] . 'MY_' . $class;
             }
         }
         // Load the specified class
-        else if(file_exists(APP_PATH . $directory . '/' . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
+        else if(file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
         {
             $name = $namespaces[APP_PATH] . $class;
         }
@@ -165,7 +165,7 @@ if(!function_exists('load_model'))
 
         $name = FALSE;
 
-        $namespace = str_replace([DIR_PATH, '/'], ['', '\\'], MODELS_PATH);
+        $namespace = str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], MODELS_PATH);
         $class = $model;
 
         // Dir ?
@@ -314,7 +314,7 @@ if( ! function_exists('view'))
         
         try {
             // View exist ?
-            if (!is_file(VIEWS_PATH . $path . '.php'))
+            if (!is_file(VIEWS_PATH . (str_replace('/', DIRECTORY_SEPARATOR, $path)) . '.php'))
             {
                 throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.', 1);
                 die;

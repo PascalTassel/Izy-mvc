@@ -5,7 +5,7 @@ namespace core;
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 // Global functions
-require_once(DIR_PATH . 'core/Functions.php');
+require_once(DIR_PATH . 'core' . DIRECTORY_SEPARATOR . 'Functions.php');
 
 // Autoloading
 $autoloading = get_config('autoloading');

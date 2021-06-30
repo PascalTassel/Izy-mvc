@@ -23,14 +23,14 @@ class IZY_Router
             // Isset routes file ?
             if (!is_file(CONFIG_PATH . 'routes.php'))
             {
-                throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'routes.php introuvable.');
+                throw new IZY_Exception('Fichier ' . CONFIG_PATH . 'routes.php introuvable.');
                 die;
             }
             
             // Include routes file
             include(CONFIG_PATH . 'routes.php');
         }
-        catch (\core\system\IZY_Exception $e)
+        catch (IZY_Exception $e)
         {
           echo $e;
         }
@@ -48,25 +48,25 @@ class IZY_Router
             // Isset $routes ?
             if (!isset($routes))
             {
-                throw new \core\system\IZY_Exception('Tableau $routes non défini dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                throw new IZY_Exception('Tableau $routes non défini dans le fichier ' . CONFIG_PATH . 'routes.php.');
                 die;
             }
             // 404 url ?
             else if (!isset($routes['404_url']))
             {
-                throw new \core\system\IZY_Exception('$routes[\'404_url\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                throw new IZY_Exception('$routes[\'404_url\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
                 die;
             }
             // Index url ?
             else if (!isset($routes['index']))
             {
-                throw new \core\system\IZY_Exception('$routes[\'index\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                throw new IZY_Exception('$routes[\'index\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
                 die;
             }
 
             $this->routes = $routes;
         }
-        catch (\core\system\IZY_Exception $e)
+        catch (IZY_Exception $e)
         {
           echo $e;
         }
@@ -122,9 +122,9 @@ class IZY_Router
         }
 
         // Namespace
-        $namespace = '\\' . str_replace([DIR_PATH, '/'], ['', '\\'], CONTROLLERS_PATH);
+        $namespace = '\\' . str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], CONTROLLERS_PATH);
         // Path
-        $path = ltrim(str_replace('\\', '/', $namespace), '/');
+        $path = ltrim(str_replace('\\', DIRECTORY_SEPARATOR, $namespace), '/');
         // Segments
         $segments = explode('/', $route);
         // Controller
@@ -139,7 +139,7 @@ class IZY_Router
             // Namespace
             $namespace .= $segments[0] . '\\';
             // Path
-            $path .= $segments[0] . '/';
+            $path .= $segments[0] . DIRECTORY_SEPARATOR;
             // Segments
             $segments = array_slice($segments, 1);
         }
@@ -147,7 +147,7 @@ class IZY_Router
         if(count($segments) > 0)
         {
             // Path
-            $path .= $controller . '/';
+            $path .= $controller . DIRECTORY_SEPARATOR;
             // Controller
             $controller = $namespace . ucfirst($segments[0]);
 
@@ -157,7 +157,7 @@ class IZY_Router
                 $method = $segments[1];
 
                 // Path
-                $path .= $method . '/';
+                $path .= $method . DIRECTORY_SEPARATOR;
             }
         }
 
@@ -174,7 +174,7 @@ class IZY_Router
             {
                 $this->args = array_slice($segments, 2);
                 // Path
-                $this->path .= implode('/', $this->args);
+                $this->path .= implode(DIRECTORY_SEPARATOR, $this->args);
             }
         }
         elseif($_is_literal)

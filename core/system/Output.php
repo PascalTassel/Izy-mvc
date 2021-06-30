@@ -40,13 +40,13 @@ class IZY_Output
             // Isset $config ?
             if (!in_array($rel, ['prev', 'canonical', 'next']))
             {
-                throw new \core\system\IZY_Exception($rel . ' n\'est pas un attribut canonical valide.', 1);
+                throw new IZY_Exception($rel . ' n\'est pas un attribut canonical valide.', 1);
                 die;
             }
 
             $this->canonicals[$rel] = $link;
         }
-        catch (\core\system\IZY_Exception $e)
+        catch (IZY_Exception $e)
         {
           echo $e;
         }
@@ -70,18 +70,18 @@ class IZY_Output
         try {
             if (gettype($datas) != 'array')
             {
-                throw new \core\system\IZY_Exception('L\'argument passé au layout doit être un tableau associatif.', 1);
+                throw new IZY_Exception('L\'argument passé au layout doit être un tableau associatif.', 1);
                 die;
             }
             elseif (isset($datas['path']) && gettype($datas['path']) != 'string')
             {
-                throw new \core\system\IZY_Exception('Le chemin du layout doit être une chaîne de caractères.', 1);
+                throw new IZY_Exception('Le chemin du layout doit être une chaîne de caractères.', 1);
                 die;
             }
 
             self::$_layout = array_merge(self::$_layout, $datas);
         }
-        catch (\core\system\IZY_Exception $e)
+        catch (IZY_Exception $e)
         {
           echo $e;
         }
@@ -138,16 +138,16 @@ class IZY_Output
         if(isset(self::$_layout['path']))
         {
             try {
-                if (!is_file(APP_PATH . self::$_layout['path'] . '.php'))
+                if (!is_file(APP_PATH . (str_replace('/', DIRECTORY_SEPARATOR, self::$_layout['path'])) . '.php'))
                 {
-                    throw new \core\system\IZY_Exception('Layout ' . APP_PATH . self::$_layout['path'] . '.php introuvable.');
+                    throw new IZY_Exception('Layout ' . APP_PATH . self::$_layout['path'] . '.php introuvable.');
                     die;
                 }
                 
                 // Get layout keys as vars
                 extract(self::$_layout);
             }
-            catch (\core\system\IZY_Exception $e)
+            catch (IZY_Exception $e)
             {
               echo $e;
             }
@@ -159,7 +159,7 @@ class IZY_Output
             self::$_time_taken = (microtime(TRUE) - self::$_start_time);
 
             // Display layout
-            include(APP_PATH . self::$_layout['path'] . '.php');
+            include(APP_PATH . (str_replace('/', DIRECTORY_SEPARATOR, self::$_layout['path'])) . '.php');
 
             // Get HTML
             self::$_output = ob_get_contents();

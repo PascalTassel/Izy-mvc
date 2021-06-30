@@ -22,12 +22,12 @@ class IZY_Database
             try {
                 if (gettype($settings) != 'array')
                 {
-                    throw new \core\system\IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
+                    throw new IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
                     die;
                 }
                 self::$_config = $settings;
             }
-            catch (\core\system\IZY_Exception $e)
+            catch (IZY_Exception $e)
             {
               echo $e;
             }
@@ -39,7 +39,7 @@ class IZY_Database
                 try {
                     if (gettype($autoload['databases']) !== 'array')
                     {
-                        throw new \core\system\IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
+                        throw new IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
                         die;
                     }
                     
@@ -49,7 +49,7 @@ class IZY_Database
                         $this->$var = $this->connect($db);
                     }
                 }
-                catch (\core\system\IZY_Exception $e)
+                catch (IZY_Exception $e)
                 {
                   echo $e;
                 }
@@ -76,21 +76,21 @@ class IZY_Database
                 \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
             ];
-        }
-        catch (\PDOException $e)
-        {
-            die('Unable to locate the specified database ' . $database . ' config : ' . $e->getMessage());
-        }
-        
-        try
-        {
+            
             self::$_is_loaded[$database] = new \PDO($dsn, $db['user'], $db['pwd'], $opts);
-
-            return self::$_is_loaded[$database];
         }
-        catch (\PDOException $e)
+        catch (\PDOException $pe)
         {
-            die('Unable to connect to the ' . $name . ' database : ' . $e->getMessage());
+            try {
+                throw new IZY_Exception('Connection impossible à la base ' . $database .' : ' . $pe->getMessage());
+                die;
+            }
+            catch (IZY_Exception $e)
+            {
+              echo $e;
+            }
         }
+
+        return self::$_is_loaded[$database];
     }
 }

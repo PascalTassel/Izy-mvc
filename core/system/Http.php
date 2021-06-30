@@ -84,13 +84,20 @@ class IZY_Http
     */
     public function redirect($url, $replace = TRUE, $code = 302)
     {
-        if($url == '')
-        {
-            die('Redirect url is empty.');
-        }
+        try {
+            if ($url == '')
+            {
+                throw new IZY_Exception('Url de redirection non renseignée dans la méthode Http->redirect().', 1);
+                die;
+            }
 
-        header('Location: ' . $url, $replace, $code);
-        die;
+            header('Location: ' . $url, $replace, $code);
+            die;
+        }
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
 
     /**
@@ -110,11 +117,18 @@ class IZY_Http
     */
     public function response_code($code = '404')
     {
-        if(!isset($this->_codes[$code]))
-        {
-            die('Code HTTP/1.1 <strong>' . $code . '</strong> not exists.');
-        }
+        try {
+            if (!isset($this->_codes[$code]))
+            {
+                throw new IZY_Exception('Code HTTP/1.1. <strong>' . $code . '</strong> inconnu.');
+                die;
+            }
 
-        header('HTTP/1.1 ' . $code . ' ' . $this->_codes[$code]);
+            header('HTTP/1.1 ' . $code . ' ' . $this->_codes[$code]);
+        }
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
 }

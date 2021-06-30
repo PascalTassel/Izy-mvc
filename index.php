@@ -16,7 +16,7 @@ spl_autoload_register(function ($class_name)
 {
     $namespace = explode('\\', $class_name);
     $class = str_replace('IZY_', '', array_pop($namespace));
-    $file = implode('/', $namespace) . '/' . $class . '.php';
+    $file = implode('/', $namespace) . DIRECTORY_SEPARATOR . $class . '.php';
     if (is_file($file))
     {
         include_once $file;
