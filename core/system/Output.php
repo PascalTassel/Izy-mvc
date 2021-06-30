@@ -40,7 +40,7 @@ class IZY_Output
             // Isset $config ?
             if (!in_array($rel, ['prev', 'canonical', 'next']))
             {
-                throw new \core\system\IZY_Exception($rel . ' n\'est pas un attribut canonical valide.');
+                throw new \core\system\IZY_Exception($rel . ' n\'est pas un attribut canonical valide.', 1);
                 die;
             }
 
