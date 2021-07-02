@@ -76,7 +76,7 @@ class IZY
         $this->load =& load_class('Load');
         $this->database =& load_class('Database');
 
-        // Define main controller (The future instance) as attribute
+        // Define main controller (the future instance) as attribute
         $this->controller =& load_class('Controller');
 
         // Get helpers and models to autoload

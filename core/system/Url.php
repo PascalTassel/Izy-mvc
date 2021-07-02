@@ -4,36 +4,65 @@ namespace core\system;
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
-* Get URL and queries
+* This file is part of the Izy_mvc project.
+*
+* Sanitize the request
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
+*/
+
+/**
+* Set request URL and queries
+*
 * @author Pascal Tassel : https://www.izy-mvc.com
 */
 class IZY_Url
 {
-    public $protocol;               // Protocol
-    public $host;                   // Host
-    public $request = '';           // Request
-    public $queries = [];           // Query string as array
-
+    public $protocol;       // Protocol
+    public $host;           // Host
+    public $request = '';   // Request
+    public $queries = [];   // Query parameters
+    
+    /**
+    * Call _set_uri() method
+    *
+    * @param string $item Name of the parameter
+    *
+    * @return object IZY_Yrl instance
+    */
     public function __construct()
     {
         $this->_set_uri();
     }
-
+    
+    /**
+    * Get request queries as query string
+    *
+    * @return string Request query string
+    */
     public function query_string()
     {
         return http_build_query($this->queries);
     }
-
+    
+    /**
+    * Extract protocol, host, request and queries from request
+    *
+    * @throws IZY_Exception
+    *
+    * @return void Attributes definition
+    */
     private function _set_uri()
     {
-        // Protocol
+        // Set protocol
         $this->protocol = $_SERVER['REQUEST_SCHEME'] != '' ? $_SERVER['REQUEST_SCHEME'] : 'http';
         if(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on'))
         {
             $this->protocol = 'https';
         }
 
-        // Host
+        // Set host
         try {
             if(is_null(get_config('host')) || empty(get_config('host')))
             {
@@ -49,10 +78,10 @@ class IZY_Url
 
         $uri = ltrim(str_replace($this->host, '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
 
-        // Request
+        // Write request
         $this->request = strtolower(parse_url($uri, PHP_URL_PATH));
 
-        // Queries
+        // Set queries parameters
         $query_string = strtolower(parse_url($uri, PHP_URL_QUERY));
         parse_str($query_string, $this->queries);
     }
