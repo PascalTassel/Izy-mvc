@@ -277,7 +277,7 @@ function &system_loaded($directory, $class = '')
 }
 
 /**
-* Send HTTP 404 and display 404 view (if defined)
+* Send HTTP 404 and display 404 view (if defined in $routes['404_url'])
 *
 * @return void 404 error
 */
