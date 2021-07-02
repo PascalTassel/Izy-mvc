@@ -98,7 +98,7 @@ class IZY_Exception extends \ErrorException
                     </a>
                     <a href="https://www.izy-mvc.com/userguide">Guide de l\'utilisateur</a>
                 </header>
-                <main>' . $this->message . '</main>
+                <main>' . $message . '</main>
                 <style type="text/css">
                 html {
                     height: 100%;
