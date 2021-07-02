@@ -2,341 +2,357 @@
 
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
-// Get Config item
-if(!function_exists('get_config'))
+/**
+* Get a configuration parameter define in $config array
+*
+* @param string $item Name of the parameter
+*
+* @return mixed Expected configuration parameter or NULL
+*/
+function get_config($item = '')
 {
-    function get_config($item = '')
-    {
-        $config =& get_config_files();
+    $config =& get_config_files();
 
-        return isset($config[$item])
-            ? $config[$item]
-            : NULL;
-    }
+    return isset($config[$item])
+        ? $config[$item]
+        : NULL;
 }
 
-// Get Config files
-if(!function_exists('get_config_files'))
+/**
+* Get configuration files defined in /app/config/
+*
+* @return array Configuration parameters
+*/
+function &get_config_files()
 {
-    function &get_config_files()
+    static $_config;
+
+    if(empty($_config))
     {
-        static $_config;
-
-        if(empty($_config))
-        {
-            try {
-                // Isset config file ?
-                if (!is_file(CONFIG_PATH . 'config.php'))
-                {
-                    throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'config.php introuvable.');
-                    die;
-                }
-                
-                // Include config file
-                include(CONFIG_PATH . 'config.php');
-            }
-            catch (\core\system\IZY_Exception $e)
+        try {
+            // Isset config file ?
+            if (!is_file(CONFIG_PATH . 'config.php'))
             {
-              echo $e;
-            }
-
-            // Include customs config files
-            foreach (scandir(CONFIG_PATH) as $file)
-            {
-                if (preg_match('#_config.php$#', $file))
-                {
-                    include(CONFIG_PATH . $file);
-                }
+                throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'config.php introuvable.');
+                die;
             }
             
-            try {
-                // Isset $config ?
-                if (!isset($config))
-                {
-                    throw new \core\system\IZY_Exception('Tableau $config non défini dans le fichier ' . CONFIG_PATH . 'config.php.');
-                    die;
-                }
-                
-                $_config = $config;
-            }
-            catch (\core\system\IZY_Exception $e)
-            {
-              echo $e;
-            }
-        }
-
-        return $_config;
-    }
-}
-
-// Get IZY_Controller instance
-if(!function_exists('get_instance'))
-{
-    function &get_instance()
-    {
-        $controller =& load_class('Controller');
-        return $controller::get_instance();
-    }
-}
-
-// Load a [library | system | helper] class (can be extended)
-if(!function_exists('load_class'))
-{
-    function &load_class($class, $directory = 'system', $param = NULL)
-    {
-        static $_classes = [];
-
-        if(isset($_classes[$class]))
-        {
-            return $_classes[$class];
-        }
-
-        // Look for the class first in the local application folders
-        // then in the native system/folders
-        $name = FALSE;
-        $namespaces = [
-            APP_PATH => str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], APP_PATH) . $directory . '\\',
-            DIR_PATH . 'core' . DIRECTORY_SEPARATOR => 'core\\' . $directory . '\\IZY_'
-        ];
-
-        // Look for the class first in the local application/libraries folder
-        // then in the native system/libraries folder
-        foreach($namespaces as $path => $namespace)
-        {
-            if(file_exists($path . $directory . DIRECTORY_SEPARATOR . $class . '.php'))
-            {
-                if(class_exists($namespace . $class))
-                {
-                    $name = $namespace . $class;
-                    break;
-                }
-            }
-        }
-        
-        // Is the request a class extension? If so we load it too
-        if($name !== FALSE)
-        {
-            if(file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . 'MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
-            {
-                $name = $namespaces[APP_PATH] . 'MY_' . $class;
-            }
-        }
-        // Load the specified class
-        else if(file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
-        {
-            $name = $namespaces[APP_PATH] . $class;
-        }
-        
-        try {
-            // Did we find the class?
-            if ($name === FALSE)
-            {
-                throw new \core\system\IZY_Exception('Fichier ' . APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php introuvable.');
-                die;
-            }
-
-            // Keep track of class loaded
-            system_loaded($directory, $class);
+            // Include config file
+            include(CONFIG_PATH . 'config.php');
         }
         catch (\core\system\IZY_Exception $e)
         {
           echo $e;
         }
 
-        $_classes[$class] = isset($param)
-            ? new $name($param)
-            : new $name();
+        // Include customs config files
+        foreach (scandir(CONFIG_PATH) as $file)
+        {
+            if (preg_match('#_config.php$#', $file))
+            {
+                include(CONFIG_PATH . $file);
+            }
+        }
+        
+        try {
+            // Isset $config ?
+            if (!isset($config))
+            {
+                throw new \core\system\IZY_Exception('Tableau $config non défini dans le fichier ' . CONFIG_PATH . 'config.php.');
+                die;
+            }
+            
+            $_config = $config;
+        }
+        catch (\core\system\IZY_Exception $e)
+        {
+          echo $e;
+        }
+    }
 
+    return $_config;
+}
+
+/**
+* Get Main controller single instance
+*
+* @return object Main controller
+*/
+function &get_instance()
+{
+    $controller =& load_class('Controller');
+    return $controller::get_instance();
+}
+
+/**
+* Load a [system | helper] class
+*
+* @param string $class Name of the class to load
+* @param string $class Directory class location
+* @param string|null $param arguments class comma separated
+*
+* @return object Expected class
+*/
+function &load_class($class, $directory = 'system', $param = NULL)
+{
+    static $_classes = [];
+
+    if(isset($_classes[$class]))
+    {
         return $_classes[$class];
     }
+
+    // Look for the class first in app folder
+    // Then in core folder
+    $name = FALSE;
+    $namespaces = [
+        APP_PATH => str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], APP_PATH) . $directory . '\\',
+        DIR_PATH . 'core' . DIRECTORY_SEPARATOR => 'core\\' . $directory . '\\IZY_'
+    ];
+
+    foreach($namespaces as $path => $namespace)
+    {
+        if(file_exists($path . $directory . DIRECTORY_SEPARATOR . $class . '.php'))
+        {
+            if(class_exists($namespace . $class))
+            {
+                $name = $namespace . $class;
+                break;
+            }
+        }
+    }
+    
+    // Is a class extension (starting by 'MY_')? If so we load it
+    if ($name !== FALSE)
+    {
+        if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . 'MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
+        {
+            $name = $namespaces[APP_PATH] . 'MY_' . $class;
+        }
+    }
+    // Load the specified class
+    else if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
+    {
+        $name = $namespaces[APP_PATH] . $class;
+    }
+    
+    try {
+        // We don't find the class?
+        if ($name === FALSE)
+        {
+            throw new \core\system\IZY_Exception('Fichier ' . APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php introuvable.');
+            die;
+        }
+
+        // Keep trace of loaded class
+        system_loaded($directory, $class);
+    }
+    catch (\core\system\IZY_Exception $e)
+    {
+      echo $e;
+    }
+
+    $_classes[$class] = isset($param)
+        ? new $name($param)
+        : new $name();
+
+    return $_classes[$class];
 }
 
-// Load a model class
-if(!function_exists('load_model'))
+/**
+* Load a model class
+*
+* @param string $model Name of the class to load
+*
+* @return object Expected model
+*/
+function &load_model($model)
 {
-    function &load_model($model)
+    static $_models = [];
+
+    if(isset($_models[$model]))
     {
-        static $_models = [];
-
-        if(isset($_models[$model]))
-        {
-            return $_models[$model];
-        }
-
-        $name = FALSE;
-
-        $namespace = str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], MODELS_PATH);
-        $class = $model;
-
-        // Dir ?
-        $segments = explode('/', $model);
-        if(count($segments) > 1)
-        {
-            $class = end($segments);
-            $pop = array_pop($segments);
-            $namespace .= implode('\\', $segments) . '\\';
-        }
-
-        $class = $namespace . $class;
-
-        // Look for the model in app/model/ dir
-        if(file_exists(MODELS_PATH . $model . '.php') && class_exists($class))
-        {
-            $name = $class;
-        }
-        
-        try {
-            // Did we find the model?
-            if ($name === FALSE)
-            {
-                throw new \core\system\IZY_Exception('Modèle ' . MODELS_PATH . $model . '.php introuvable.');
-                die;
-            }
-
-            // Keep track of model loaded
-            models_loaded($model);
-        }
-        catch (\core\system\IZY_Exception $e)
-        {
-          echo $e;
-        }
-
-        $_models[$model] = new $name();
-
         return $_models[$model];
     }
+
+    $name = FALSE;
+
+    $namespace = str_replace([DIR_PATH, DIRECTORY_SEPARATOR], ['', '\\'], MODELS_PATH);
+    $class = $model;
+
+    // Dir ?
+    $segments = explode('/', $model);
+    if(count($segments) > 1)
+    {
+        $class = end($segments);
+        $pop = array_pop($segments);
+        $namespace .= implode('\\', $segments) . '\\';
+    }
+
+    $class = $namespace . $class;
+
+    // Look for the model in app/model/ dir
+    if(file_exists(MODELS_PATH . $model . '.php') && class_exists($class))
+    {
+        $name = $class;
+    }
+    
+    try {
+        // Did we find the model?
+        if ($name === FALSE)
+        {
+            throw new \core\system\IZY_Exception('Modèle ' . MODELS_PATH . $model . '.php introuvable.');
+            die;
+        }
+
+        // Keep track of model loaded
+        models_loaded($model);
+    }
+    catch (\core\system\IZY_Exception $e)
+    {
+      echo $e;
+    }
+
+    $_models[$model] = new $name();
+
+    return $_models[$model];
 }
 
-if ( ! function_exists('models_loaded'))
+/**
+* Keeps trace of which models have been loaded.
+* This function is called by the load_model() function above
+*
+* @param string $model Name of the model to keep trace
+*
+* @return object Expected loaded model
+*/
+function &models_loaded($model = '')
 {
-    /**
-     * Keeps track of which libraries have been loaded. This function is
-     * called by the load_class() function above
-     *
-     * @param    string
-     * @return    array
-     */
-    function &models_loaded($model = '')
+    static $_is_loaded = [];
+
+    if ($model != '')
     {
-        static $_is_loaded = [];
-
-        if($model != '')
-        {
-            $_is_loaded[str_replace('/', '_', strtolower($model))] = $model;
-        }
-
-        return $_is_loaded;
+        $_is_loaded[str_replace('/', '_', strtolower($model))] = $model;
     }
+
+    return $_is_loaded;
 }
 
-if ( ! function_exists('system_loaded'))
+/**
+* Keeps trace of which classes have been loaded.
+* This function is called by the load_class() function above
+*
+* @param string $directory Directory class location
+* @param string $class Name of the loaded class
+*
+* @return object Expected loaded model
+*/
+function &system_loaded($directory, $class = '')
 {
-    /**
-     * Keeps track of which libraries have been loaded. This function is
-     * called by the load_class() function above
-     *
-     * @param    string
-     * @return    array
-     */
-    function &system_loaded($directory, $class = '')
+    static $_is_loaded = [
+        'helpers' => [],
+        'system' => []
+    ];
+
+    if ($class != '')
     {
-        static $_is_loaded = [
-            'helpers' => [],
-            'system' => []
-        ];
-
-        if($class != '')
-        {
-            $_is_loaded[$directory][strtolower($class)] = $class;
-        }
-
-        return $_is_loaded[$directory];
+        $_is_loaded[$directory][strtolower($class)] = $class;
     }
+
+    return $_is_loaded[$directory];
 }
 
-if( ! function_exists('show_404'))
+/**
+* Send HTTP 404 and display 404 view (if defined)
+*
+* @return void 404 error
+*/
+function show_404()
 {
-    function show_404()
+    // Get instance
+    $IZY =& get_instance();
+    
+    // 404 header
+    $IZY->http->response_code('404');
+
+    $routes = $IZY->router->routes;
+
+    if ($routes['404_url'] != '')
     {
-        // Get instance
-        $IZY =& get_instance();
-        
-        // 404 header
-        $IZY->http->response_code('404');
+        $IZY->router->set_path($routes['404_url']);
 
-        $routes = $IZY->router->routes;
+        $controller_404 = $IZY->router->controller;
 
-        if($routes['404_url'] != '')
+        if (!empty($controller_404))
         {
-            $IZY->router->set_path($routes['404_url']);
+            // Empty output content
+            $IZY->output->empty();
 
-            $controller_404 = $IZY->router->controller;
+            // Call 404 controller
+            $class = new $controller_404();
+            call_user_func_array(array($class, $IZY->router->method), $IZY->router->args);
 
-            if(!empty($controller_404))
-            {
-                // Empty output content
-                $IZY->output->empty();
+            // Unset 404 controller
+            unset($class);
 
-                // Call controller
-                $class = new $controller_404();
-                call_user_func_array(array($class, $IZY->router->method), $IZY->router->args);
-
-                // Unset controller
-                unset($class);
-
-                // Output
-                $IZY->output->_display();
-            }
+            // Output
+            $IZY->output->_display();
         }
-
-        die;
     }
+    die;
 }
 
-if( ! function_exists('view'))
+/**
+* Get content view
+* pre_view hook class is called before view include
+* post_view hook class is called after view include
+*
+* @param string $path Path to expected view
+* @param array $datas passed into view
+*
+* @return string Output view
+*/
+function view($path, $datas = [])
 {
-    function view($path, $datas = [])
+    // Get instance
+    $IZY =& get_instance();
+    
+    // Convert datas array keys to vars
+    if (!empty($datas))
     {
-        // Get instance
-        $IZY =& get_instance();
-        
-        // Convert datas array keys to vars
-        if (!empty($datas))
-        {
-            extract($datas);
-        }
-        
-        // Launch cache
-        ob_start();
-
-        // Pre_view hook
-        $IZY->hooks->set_hook('pre_view');
-        
-        try {
-            // View exist ?
-            if (!is_file(VIEWS_PATH . (str_replace('/', DIRECTORY_SEPARATOR, $path)) . '.php'))
-            {
-                throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.', 1);
-                die;
-            }
-
-            // Include view
-            include(VIEWS_PATH . $path . '.php');
-        }
-        catch (\core\system\IZY_Exception $e)
-        {
-          echo $e;
-        }
-
-        // Post_view hook
-        $IZY->hooks->set_hook('post_view');
-
-        // Content view
-        $content = ob_get_contents();
-
-        // Fermeture du cache
-        ob_end_clean();
-
-        return $content;
+        extract($datas);
     }
+    
+    // Launch cache
+    ob_start();
+
+    // Pre_view hook
+    $IZY->hooks->set_hook('pre_view');
+    
+    try {
+        // View exist ?
+        if (!is_file(VIEWS_PATH . (str_replace('/', DIRECTORY_SEPARATOR, $path)) . '.php'))
+        {
+            throw new \core\system\IZY_Exception('Vue ' . VIEWS_PATH . $path . '.php introuvable.', 1);
+            die;
+        }
+
+        // Include view
+        include(VIEWS_PATH . $path . '.php');
+    }
+    catch (\core\system\IZY_Exception $e)
+    {
+      echo $e;
+    }
+
+    // Post_view hook
+    $IZY->hooks->set_hook('post_view');
+
+    // Content view
+    $content = ob_get_contents();
+
+    // Close cache
+    ob_end_clean();
+
+    return $content;
 }
