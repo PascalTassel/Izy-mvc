@@ -87,7 +87,7 @@ class IZY_Router
     }
 
     /**
-    * get route from request
+    * Get route from request
     *
     * @param string $url Input url
     *
