@@ -1,6 +1,14 @@
 <?php
-
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
+
+/**
+* This file is part of the Izy_mvc project.
+*
+* Global functions
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
+*/
 
 /**
 * Get a configuration parameter define in $config array
