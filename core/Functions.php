@@ -21,6 +21,8 @@ function get_config($item = '')
 /**
 * Get configuration files defined in /app/config/
 *
+* @throws IZY_Exception
+*
 * @return array Configuration parameters
 */
 function &get_config_files()
@@ -90,6 +92,8 @@ function &get_instance()
 * @param string $class Name of the class to load
 * @param string $class Directory class location
 * @param string|null $param arguments class comma separated
+*
+* @throws IZY_Exception
 *
 * @return object Expected class
 */
@@ -163,6 +167,8 @@ function &load_class($class, $directory = 'system', $param = NULL)
 * Load a model class
 *
 * @param string $model Name of the class to load
+*
+* @throws IZY_Exception
 *
 * @return object Expected model
 */
@@ -309,6 +315,8 @@ function show_404()
 *
 * @param string $path Path to expected view
 * @param array $datas passed into view
+*
+* @throws IZY_Exception
 *
 * @return string Output view
 */
