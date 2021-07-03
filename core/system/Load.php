@@ -38,7 +38,8 @@ class IZY_Load
             }
             
             $attribute = (trim($alias) !== '') ? trim($alias) : strtolower($helper);
-
+            
+            // Access to the helper as an attribute of the controller
             get_instance()->$attribute =& load_class(str_replace('/', DIRECTORY_SEPARATOR, $helper), 'helpers');
         }
         catch (IZY_Exception $e)
@@ -75,6 +76,7 @@ class IZY_Load
             
             $attribute = (trim($alias) !== '') ? trim($alias) : str_replace('/', '_', strtolower($model));
 
+            // Access to the helper as an attribute of the controller
             get_instance()->$attribute =& load_model(str_replace('/', DIRECTORY_SEPARATOR, $model));
         }
         catch (IZY_Exception $e)
