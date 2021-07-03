@@ -84,9 +84,9 @@ function &get_config_files()
 }
 
 /**
-* Get Main controller single instance
+* Get Main controller instance
 *
-* @return object Main controller
+* @return object Main controller (IZY_Controller)
 */
 function &get_instance()
 {
@@ -259,7 +259,7 @@ function &models_loaded($model = '')
 * @param string $directory Directory class location
 * @param string $class Name of the loaded class
 *
-* @return object Expected loaded model
+* @return array Loaded classes into the expected directory
 */
 function &system_loaded($directory, $class = '')
 {

@@ -23,13 +23,15 @@ class IZY_Router
     *
     * @param string $url Request url
     *
+    * @throws IZY_Exception
+    *
     * @return void Attribute definition
     */
     public function __construct($url)
     {
         // Get routes
         try {
-            // Isset routes file ?
+            // Not isset routes file ?
             if (!is_file(CONFIG_PATH . 'routes.php'))
             {
                 throw new IZY_Exception('Fichier ' . CONFIG_PATH . 'routes.php introuvable.');
@@ -45,28 +47,28 @@ class IZY_Router
         }
 
         // Get custom routes
-        foreach(scandir(CONFIG_PATH) as $route)
+        foreach (scandir(CONFIG_PATH) as $route)
         {
-            if(preg_match('#_routes.php$#', $route))
+            if (preg_match('#_routes.php$#', $route))
             {
                 include(CONFIG_PATH . $route);
             }
         }
         
         try {
-            // Isset $routes?
+            // Not isset $routes?
             if (!isset($routes))
             {
                 throw new IZY_Exception('Tableau $routes non défini dans le fichier ' . CONFIG_PATH . 'routes.php.');
                 die;
             }
-            // Isset 404 url?
+            // Not isset 404 url?
             else if (!isset($routes['404_url']))
             {
                 throw new IZY_Exception('$routes[\'404_url\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
                 die;
             }
-            // Isset index url?
+            // Not isset index url?
             else if (!isset($routes['index']))
             {
                 throw new IZY_Exception('$routes[\'index\'] non définie dans le fichier ' . CONFIG_PATH . 'routes.php.');
@@ -84,39 +86,6 @@ class IZY_Router
         $url = ($url === '') ? $this->routes['index'] : $url;
 
         $this->set_path($url);
-    }
-
-    /**
-    * Get route from request
-    *
-    * @param string $url Input url
-    *
-    * @return string Route according to request
-    */
-    private function _get_route($url)
-    {
-        // Isset literal route ?
-        if(isset($this->routes[$url]))
-        {
-            return $this->routes[$url];
-        }
-
-        // Loop on routes
-        foreach($this->routes as $key => $val)
-        {
-            // RegEx match ?
-            if(preg_match('#^' . $key . '$#', $url))
-            {
-                // Do we have a back-reference?
-                if(strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE)
-                {
-                    $val = preg_replace('#^' . $key . '$#', $val, $url);
-                }
-                return $val;
-            }
-        }
-
-        return $url;
     }
 
     /**
@@ -207,5 +176,38 @@ class IZY_Router
                 $this->set_path($this->routes['404_url']);
             }
         }
+    }
+
+    /**
+    * Get route from request
+    *
+    * @param string $url Input url
+    *
+    * @return string Route according to request
+    */
+    private function _get_route($url)
+    {
+        // Isset literal route ?
+        if (isset($this->routes[$url]))
+        {
+            return $this->routes[$url];
+        }
+
+        // Loop on routes
+        foreach ($this->routes as $key => $val)
+        {
+            // RegEx match ?
+            if (preg_match('#^' . $key . '$#', $url))
+            {
+                // Do we have a back-reference?
+                if (strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE)
+                {
+                    $val = preg_replace('#^' . $key . '$#', $val, $url);
+                }
+                return $val;
+            }
+        }
+
+        return $url;
     }
 }

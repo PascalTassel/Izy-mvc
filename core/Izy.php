@@ -59,6 +59,10 @@ class IZY
 
     private function __construct()
     {
+        // Define Izy_output as attribute
+        // In first position because it manages the timing of the response
+        $this->output =& load_class('Output');
+        
         // Define Izy_Hooks as attribute
         $this->hooks =& load_class('Hooks');
 
@@ -72,7 +76,6 @@ class IZY
 
         // Define remaining Izy classes as attributes
         $this->http =& load_class('Http');
-        $this->output =& load_class('Output');
         $this->load =& load_class('Load');
         $this->database =& load_class('Database');
 
@@ -135,13 +138,13 @@ class IZY
         // Retrieve the controller called by the request
         $response_controller = $this->router->controller;
         
-        // If controller found by the router
-        if (!empty($this->router->controller))
+        // If controller is defined
+        if (!empty($response_controller))
         {
-            // Get called controller instance
+            // Get called controller instance (child of main controller IZY_Controller)
             $class = new $response_controller();
             
-            // Assign called controller as attribute of instance (main controller)
+            // Add called controller to an attribute $controller of the main controller
             get_instance()->{'controller'} = $class;
             
             // Call controller method passing arguments (depending on the response of the router)
