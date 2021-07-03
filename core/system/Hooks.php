@@ -17,7 +17,6 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Hooks
 {
     private static $_hooks = [];        // Hooks array
-    private static $_classes = [];      // Classes to call
     private static $_names = [          // Valid hook names
         'pre_system',
         'pre_controller',
@@ -56,7 +55,7 @@ class IZY_Hooks
             }
             
             // Check if hooks are valids
-            foreach (self::$_hooks as $name) {
+            foreach (self::$_hooks as $name => $params) {
                 
                 try {
                     // Unknown hook name?
@@ -65,8 +64,6 @@ class IZY_Hooks
                         throw new IZY_Exception($name . 'n\'est pas un hook valide.');
                         die;
                     }
-                    
-                    $hook = self::$_hooks[$name];
                 }
                 catch (IZY_Exception $e)
                 {
@@ -74,21 +71,28 @@ class IZY_Hooks
                 }
                 
                 try {
+                    // Class isn't defined
+                    if (!isset($params['class']))
+                    {
+                        throw new IZY_Exception('Le champ class du hook ' . $name . ' n\'est pas défini.');
+                        die;
+                    }
                     // Class isn't a string
-                    if (gettype($hook['class']) !== 'string')
+                    if (gettype($params['class']) !== 'string')
                     {
                         throw new IZY_Exception('La valeur du champ class du hook ' . $name . ' doit être une chaîne de caractères.');
                         die;
                     }
                     // Isn't a class ?
-                    else if (class_exists($hook['class']) === false)
+                    else if (class_exists('\\' . $params['class']) === false)
                     {
                         throw new IZY_Exception('La valeur du champ class du hook ' . $name . ' n\'est pas une classe.');
                         die;
                     }
                     
-                    $class = '\\' . $hook['class'];
-                    self::$_classes[$name] = new $class();
+                    // Store class as attribute
+                    $class = '\\' . $params['class'];
+                    $this->$name = new $class();
                 }
                 catch (IZY_Exception $e)
                 {
@@ -96,10 +100,16 @@ class IZY_Hooks
                 }
                 
                 try {
-                    // Method doesn't exist?
-                    if (in_array($hook['method'], get_class_methods(self::$_classes[$name])) === false)
+                    // Class isn't defined
+                    if (!isset($params['method']))
                     {
-                        throw new IZY_Exception('La méthode ' . $method . ' du hook ' . $name . ' est introuvable.');
+                        throw new IZY_Exception('Le champ method du hook ' . $name . ' n\'est pas défini.');
+                        die;
+                    }
+                    // Method doesn't exist?
+                    else if (in_array($params['method'], get_class_methods($this->$name)) === false)
+                    {
+                        throw new IZY_Exception('La méthode ' . $params['method'] . ' du hook ' . $name . ' est introuvable.');
                         die;
                     }
                 }
@@ -108,10 +118,10 @@ class IZY_Hooks
                   echo $e;
                 }
                 
-                if (isset($hook['args'])) {
+                if (isset($params['args'])) {
                     try {
                         // Args Aren't array ?
-                        if (gettype($hook['args']) !== 'array')
+                        if (gettype($params['args']) !== 'array')
                         {
                             throw new IZY_Exception('La valeur du champ args du hook ' . $name . ' n\'est pas un tableau.');
                             die;
@@ -122,7 +132,7 @@ class IZY_Hooks
                       echo $e;
                     }
                     
-                    foreach ($hook['args'] as $arg) {
+                    foreach ($params['args'] as $arg) {
                         try {
                             // Arg isn't a string?
                             if (gettype($arg) !== 'string')
@@ -154,16 +164,16 @@ class IZY_Hooks
     */
     public function set_hook($name)
     {
-        if (isset(self::$_hooks[$name]))
+        if (property_exists($this, $name))
         {
             $method = self::$_hooks[$name]['method'];
             $args = self::$_hooks[$name]['args'];
 
             // Call method
-            call_user_func_array(array(self::$_classes[$name], $method), $args);
+            call_user_func_array(array($this->$name, $method), $args);
 
             // Unset class
-            unset(self::$_classes[$name]);
+            unset($this->$name);
         }
     }
 }
