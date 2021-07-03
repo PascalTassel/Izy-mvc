@@ -5,30 +5,38 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Main controller
-* @author https://www.izy-mvc.com
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
 */
 class IZY_Controller
 {
-    private static $_instance;
-
-    public function __construct($response_controller = '')
+    private static $_instance;  // This
+    
+    /**
+    * Define controller attributes
+    *
+    * @return void Attributes definition
+    */
+    public function __construct()
     {
         self::$_instance =& $this;
 
-        // Assign [system, helpers] classses objects to local variables
-        foreach(system_loaded('system') as $var => $system_class)
+        // Assign Izy classses as controller attributes (excluding IZY_controller class)
+        foreach (system_loaded('system') as $attribute => $system_class)
         {
-            if($var != 'controller')
+            if ($attribute != 'controller')
             {
-                $this->$var =& load_class($system_class, 'system');
+                $this->$attribute =& load_class($system_class, 'system');
             }
         }
+        // Assign helpers as controller attributes
         foreach(system_loaded('helpers') as $var => $system_class)
         {
             $this->$var =& load_class($system_class, 'helpers');
         }
 
-        // Assign models to local variables
+        // Assign models as model attributes
         foreach(models_loaded() as $var => $model)
         {
             $this->$var =& load_model($model);
@@ -36,8 +44,9 @@ class IZY_Controller
     }
 
     /**
-    * Get the Controller instance
-    * @return object
+    * Get the main controller instance
+    *
+    * @return object Main controller instance
     */
     public static function &get_instance()
     {

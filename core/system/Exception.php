@@ -4,16 +4,31 @@ namespace core\system;
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
-* Customized Exception
-* @author Pascal Tassel : https://www.izy-mvc.com
+* Customized Exception for IZY process (don't use in a controller)
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
 */
 class IZY_Exception extends \ErrorException
 {
+    /**
+    * Throw exception
+    *
+    * @param $message Exception message
+    * @param $code Exception code : 0 | 1 (to wrap dom in a <body> tag)
+    *
+    * @return object New IZY_Exception
+    */
     public function __construct($message, $code = 0)
     {
         parent::__construct($message, $code);
     }
-
+    
+    /**
+    * Write exception
+    *
+    * @return string Exception string
+    */
     public function __toString()
     {
         switch ($this->severity)
@@ -40,6 +55,11 @@ class IZY_Exception extends \ErrorException
         return $this->_display();
     }
     
+    /**
+    * Exception dom
+    *
+    * @return string Exception HTML formatting
+    */
     private function _display() {
         $output = '
         <section id="exception-msg">
@@ -82,6 +102,13 @@ class IZY_Exception extends \ErrorException
         return ($this->code === 0) ? $this->_wrap($output) : $output;
     }
     
+    /**
+    * Wrap exception dom in a <body> tag
+    *
+    * @param string $message Dom to wrap
+    *
+    * @return string Wrapped message
+    */
     private function _wrap($message)
     {
         return '

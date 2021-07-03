@@ -5,18 +5,27 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
 * Database utilities
-* @author https://www.izy-mvc.com
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
 */
 class IZY_Database
 {
     private static $_config;      // Settings (set in app/config/config.php)
     private static $_is_loaded;   // Keep a trace of loaded databases
-
+    
+    /**
+    * Get databases settings
+    *
+    * @throws IZY_Exception
+    *
+    * @return void Attribute definition
+    */
     public function __construct()
     {
         // Settings
         $settings = get_config('databases');
-        if(!is_null($settings))
+        if (!is_null($settings))
         {
             
             try {
@@ -42,53 +51,90 @@ class IZY_Database
                         throw new IZY_Exception('$config[\'databases\'] doit être un tableau associatif.');
                         die;
                     }
-                    
-                    foreach($autoload['databases'] as $db)
-                    {
-                        $var = strtolower($db);
-                        $this->$var = $this->connect($db);
-                    }
                 }
                 catch (IZY_Exception $e)
                 {
                   echo $e;
                 }
+                
+                foreach ($autoload['databases'] as $db)
+                {
+                    $attribute = strtolower($db);
+                    $this->$attribute = $this->connect($db);
+                }
             }
         }
     }
+    
 
+    /**
+    * Create database connection
+    *
+    * @param string $database Database name
+    *
+    * @throws IZY_Exception
+    *
+    * @return object PDO object
+    */
     public function connect($database)
     {
-        if(isset(self::$_is_loaded[$database]))
+        if (isset(self::$_is_loaded[$database]))
         {
             return self::$_is_loaded[$database];
         }
 
         // Database settings
         $db = self::$_config[$database];
+        try {
+            // Not isset host?
+            if (!isset($db['host']) || (gettype($db['host'] !== 'string'))) {
+                throw new IZY_Exception('Paramètre host incorrect pour la base de donnée&nbsp;: ' . $database);
+                die;
+            }
+            // Not isset name?
+            else if (!isset($db['name']) || (gettype($db['name'] !== 'string')))
+            {
+                throw new IZY_Exception('Paramètre name incorrect pour la base de donnée&nbsp;: ' . $database);
+                die;
+            }
+            // Not isset charset?
+            else if (!isset($db['charset']) || (gettype($db['charset'] !== 'string')))
+            {
+                throw new IZY_Exception('Paramètre charset incorrect pour la base de donnée&nbsp;: ' . $database);
+                die;
+            }
+            // Not isset user?
+            else if (!isset($db['user']) || (gettype($db['user'] !== 'string')))
+            {
+                throw new IZY_Exception('Paramètre user incorrect pour la base de donnée&nbsp;: ' . $database);
+                die;
+            }
+            // Not isset pwd?
+            else if (!isset($db['pwd']) || (gettype($db['pwd'] !== 'string')))
+            {
+                throw new IZY_Exception('Paramètre pwd incorrect pour la base de donnée&nbsp;: ' . $database);
+                die;
+            }
+            
+            $dsn = 'mysql:host=' . $db['host'] . ';dbname=' . $db['name']. ';charset=' . $db['charset'];
+        }
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
         
         try
         {
-            $dsn = 'mysql:host=' . $db['host']. ';dbname=' . $db['name']. ';charset=' . $db['charset'];
-
             // PDO Options
             $opts = [
                 \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
             ];
-            
             self::$_is_loaded[$database] = new \PDO($dsn, $db['user'], $db['pwd'], $opts);
         }
         catch (\PDOException $pe)
         {
-            try {
-                throw new IZY_Exception('Connection impossible à la base ' . $database .' : ' . $pe->getMessage());
-                die;
-            }
-            catch (IZY_Exception $e)
-            {
-              echo $e;
-            }
+            echo $e->getMessage();
         }
 
         return self::$_is_loaded[$database];

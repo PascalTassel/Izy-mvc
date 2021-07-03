@@ -4,13 +4,15 @@ namespace core\system;
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /**
-* Set HTTP headers
-* @author https://www.izy-mvc.com
+* Set HTTP headers response
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
 */
 class IZY_Http
 {
     private $_headers = [];
-    private $_codes = array(                        // HTTP codes used for headers
+    private $_codes = array(    // HTTP codes used for headers
         '200' => 'OK',
         '201' => 'Created',
         '202' => 'Accepted',
@@ -51,10 +53,13 @@ class IZY_Http
         '504' => 'Gateway Timeout',
         '505' => 'HTTP Version Not Supported'
     );
-
+    
     /**
-    * Add header
-    * @param string $header Header content
+    * Add HTTP header to response
+    *
+    * @param string $header Header to add
+    *
+    * @return void Adding Header to $_headers array()
     */
     public function add_header($header)
     {
@@ -65,29 +70,71 @@ class IZY_Http
     * Set header location
     * @param string $url Url location
     */
+    
+    /**
+    * Set header location
+    *
+    * @param string $url Url to redirect
+    *
+    * @throws IZY_Exception
+    *
+    * @return function Header location
+    */
     public function location($url = '')
     {
-        if($url == '')
-        {
-            die('Location url is empty.');
+        try {
+            // Url isn't string ?
+            if (gettype($url) !== 'string')
+            {
+                throw new IZY_Exception('L\'url de redirection doit être une chaîne de caractères.', 1);
+                die;
+            }
+            // Url is empty ?
+            else if (trim($url) === '')
+            {
+                throw new IZY_Exception('L\'url de redirection indiquée est vide.');
+                die;
+            }
+
+            header('Location: ' . trim($url));
+            die;
         }
-
-        header('Location: ' . $url);
-        die;
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
-
+    
     /**
     * Redirection
+    *
     * @param string $url Url to redirect
-    * @param boolean $replace existing header
-    * @param int $code header code
+    * @param boolean $replace Replace or add to headers stack
+    * @param int $code
+    *
+    * @throws IZY_Exception
+    *
+    * @return function Header location
     */
     public function redirect($url, $replace = TRUE, $code = 302)
     {
         try {
-            if ($url == '')
+            // Url isn't string ?
+            if (gettype($url) !== 'string')
             {
-                throw new IZY_Exception('Url de redirection non renseignée dans la méthode Http->redirect().', 1);
+                throw new IZY_Exception('L\'url de redirection doit être une chaîne de caractères.');
+                die;
+            }
+            // Url is empty ?
+            else if (trim($url) === '')
+            {
+                throw new IZY_Exception('L\'url de redirection indiquée est vide.');
+                die;
+            }
+            // replace isn't boolean ?
+            else if (gettype($replace) !== 'boolean')
+            {
+                throw new IZY_Exception('Le second paramètre de la méthode IZY_Http->redirect() doit être de type booléen.');
                 die;
             }
 
@@ -99,31 +146,36 @@ class IZY_Http
           echo $e;
         }
     }
-
+    
     /**
-    * Send headers
+    * Add headers to response
+    *
+    * @return mixed Header
     */
     public function send_headers()
     {
-        foreach($this->_headers as $header)
+        foreach ($this->_headers as $header)
         {
             header($header);
         }
     }
 
     /**
-    * Set header code
-    * @param str $code header code
+    * Set HTTP header response code
+    *
+    * @param string $code Header code
     */
     public function response_code($code = '404')
     {
         try {
+            // Unknown code?
             if (!isset($this->_codes[$code]))
             {
                 throw new IZY_Exception('Code HTTP/1.1. <strong>' . $code . '</strong> inconnu.');
                 die;
             }
-
+            
+            // Add header
             header('HTTP/1.1 ' . $code . ' ' . $this->_codes[$code]);
         }
         catch (IZY_Exception $e)

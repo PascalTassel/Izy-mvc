@@ -105,7 +105,7 @@ class IZY
             throw new system\IZY_Exception('$autoload[\'helpers\'] doit être un tableau. Exemple&nbsp;: [\'App_helper\']');
         }
             
-        // Add 'Izy Url_helper' to autoloaded helpers
+        // Autoload 'Url_helper'
         array_push($autoload['helpers'], 'Url_helper');
         
         // Load helpers
