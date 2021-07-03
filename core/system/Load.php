@@ -37,7 +37,7 @@ class IZY_Load
                 die;
             }
             
-            $attribute = (trim($alias) !== '') ? trim($alias) : strtolower($helper);
+            $attribute = (trim($alias) !== '') ? trim($alias) : str_replace('/', '_', strtolower($helper));
         }
         catch (IZY_Exception $e)
         {

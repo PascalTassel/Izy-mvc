@@ -31,15 +31,17 @@ class IZY_Controller
             }
         }
         // Assign helpers as controller attributes
-        foreach(system_loaded('helpers') as $var => $system_class)
+        foreach(system_loaded('helpers') as $attribute => $system_class)
         {
-            $this->$var =& load_class($system_class, 'helpers');
+            $attribute = str_replace('/', '_', strtolower($attribute));
+            $this->$attribute =& load_class($system_class, 'helpers');
         }
 
         // Assign models as model attributes
-        foreach(models_loaded() as $var => $model)
+        foreach(models_loaded() as $attribute => $model)
         {
-            $this->$var =& load_model($model);
+            $attribute = str_replace('/', '_', strtolower($attribute));
+            $this->$attribute =& load_model($model);
         }
     }
 
