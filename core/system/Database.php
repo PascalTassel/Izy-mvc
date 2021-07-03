@@ -12,7 +12,6 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Database
 {
     private static $_config;      // Settings (set in app/config/config.php)
-    private static $_is_loaded;   // Keep a trace of loaded databases
     
     /**
     * Get databases settings
@@ -60,6 +59,7 @@ class IZY_Database
                 foreach ($autoload['databases'] as $db)
                 {
                     $attribute = strtolower($db);
+                    echo $attribute;
                     $this->$attribute = $this->connect($db);
                 }
             }
@@ -78,39 +78,40 @@ class IZY_Database
     */
     public function connect($database)
     {
-        if (isset(self::$_is_loaded[$database]))
+        $attribute = strtolower($database);
+        if (property_exists($this, $attribute))
         {
-            return self::$_is_loaded[$database];
+            return $this->$attribute;
         }
 
         // Database settings
         $db = self::$_config[$database];
         try {
             // Not isset host?
-            if (!isset($db['host']) || (gettype($db['host'] !== 'string'))) {
+            if (!isset($db['host']) || (gettype($db['host']) !== 'string')) {
                 throw new IZY_Exception('Paramètre host incorrect pour la base de donnée&nbsp;: ' . $database);
                 die;
             }
             // Not isset name?
-            else if (!isset($db['name']) || (gettype($db['name'] !== 'string')))
+            else if (!isset($db['name']) || (gettype($db['name']) !== 'string'))
             {
                 throw new IZY_Exception('Paramètre name incorrect pour la base de donnée&nbsp;: ' . $database);
                 die;
             }
             // Not isset charset?
-            else if (!isset($db['charset']) || (gettype($db['charset'] !== 'string')))
+            else if (!isset($db['charset']) || (gettype($db['charset']) !== 'string'))
             {
                 throw new IZY_Exception('Paramètre charset incorrect pour la base de donnée&nbsp;: ' . $database);
                 die;
             }
             // Not isset user?
-            else if (!isset($db['user']) || (gettype($db['user'] !== 'string')))
+            else if (!isset($db['user']) || (gettype($db['user']) !== 'string'))
             {
                 throw new IZY_Exception('Paramètre user incorrect pour la base de donnée&nbsp;: ' . $database);
                 die;
             }
             // Not isset pwd?
-            else if (!isset($db['pwd']) || (gettype($db['pwd'] !== 'string')))
+            else if (!isset($db['pwd']) || (gettype($db['pwd']) !== 'string'))
             {
                 throw new IZY_Exception('Paramètre pwd incorrect pour la base de donnée&nbsp;: ' . $database);
                 die;
@@ -130,13 +131,13 @@ class IZY_Database
                 \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
             ];
-            self::$_is_loaded[$database] = new \PDO($dsn, $db['user'], $db['pwd'], $opts);
+            $this->$attribute = new \PDO($dsn, $db['user'], $db['pwd'], $opts);
+
+            return $this->$attribute;
         }
-        catch (\PDOException $pe)
+        catch (\PDOException $e)
         {
             echo $e->getMessage();
         }
-
-        return self::$_is_loaded[$database];
     }
 }
