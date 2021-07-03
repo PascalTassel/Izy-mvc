@@ -40,7 +40,7 @@ class IZY_Load
         foreach ($helpers as $helper)
         {
             $class =& load_class(str_replace('/', DIRECTORY_SEPARATOR, $helper), 'helpers');
-            $var = strtolower($name);
+            $var = strtolower($helper);
 
             get_instance()->$var = $class;
         }
