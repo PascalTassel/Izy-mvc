@@ -118,19 +118,9 @@ class IZY_Output
     {
         try {
             // It's not an array ?
-            if (gettype($datas) != 'array')
+            if (gettype($datas) !== 'array')
             {
                 throw new IZY_Exception('L\'argument passé au layout doit être un tableau associatif.', 1);
-                die;
-            }
-            elseif (!isset($datas['path']))
-            {
-                throw new IZY_Exception('Chemin du layout non renseigné : $this->output->layout([\'path\' => \'path/to/layout\']).', 1);
-                die;
-            }
-            elseif (gettype($datas['path']) != 'string')
-            {
-                throw new IZY_Exception('Le chemin du layout doit être une chaîne de caractères.', 1);
                 die;
             }
 
@@ -140,6 +130,8 @@ class IZY_Output
         {
           echo $e;
         }
+
+        self::$_layout = array_merge(self::$_layout, $datas);
     }
     
     /**
@@ -177,8 +169,27 @@ class IZY_Output
         $instance =& get_instance();
         
         // Is there a layout
-        if (isset(self::$_layout['path']))
+        if (!empty(self::$_layout))
         {
+            try {
+                // No path?
+                if (!isset(self::$_layout['path']))
+                {
+                    throw new IZY_Exception('Chemin du layout non renseigné : $this->output->layout([\'path\' => \'path/to/layout\']).', 1);
+                    die;
+                }
+                // Not string?
+                else if (gettype(self::$_layout['path']) !== 'string')
+                {
+                    throw new IZY_Exception('Le chemin du layout doit être une chaîne de caractères.', 1);
+                    die;
+                }
+            }
+            catch (IZY_Exception $e)
+            {
+              echo $e;
+            }
+            
             try {
                 // Layout not found ?
                 if (!is_file(APP_PATH . (str_replace('/', DIRECTORY_SEPARATOR, self::$_layout['path'])) . '.php'))
