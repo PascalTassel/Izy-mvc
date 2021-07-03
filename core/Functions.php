@@ -246,7 +246,7 @@ function &models_loaded($model = '')
 
     if ($model != '')
     {
-        $_is_loaded[str_replace('/', '_', strtolower($model))] = $model;
+        $_is_loaded[strtolower($model)] = $model;
     }
 
     return $_is_loaded;
