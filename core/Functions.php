@@ -341,9 +341,6 @@ function view($path, $datas = [])
     
     // Launch cache
     ob_start();
-
-    // Pre_view hook
-    $IZY->hooks->set_hook('pre_view');
     
     try {
         // View exist ?
@@ -360,9 +357,6 @@ function view($path, $datas = [])
     {
       echo $e;
     }
-
-    // Post_view hook
-    $IZY->hooks->set_hook('post_view');
 
     // Content view
     $content = ob_get_contents();
