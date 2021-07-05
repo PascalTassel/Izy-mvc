@@ -19,7 +19,7 @@ class IZY_Router
     private static $_routes = [];            // Routes (defined in $routes[])
     
     /**
-    * Get routes and call _set_path() method
+    * Get routes and call _set_response() method
     *
     * @param string $url Request url
     *
@@ -85,7 +85,7 @@ class IZY_Router
         // Index url if url empty
         $url = ($url === '') ? self::$_routes['index'] : $url;
 
-        $this->set_path($url);
+        $this->set_response($url);
     }
     
     /**
@@ -128,7 +128,7 @@ class IZY_Router
     *
     * @return string Route according to request
     */
-    public function set_path($url)
+    public function set_response($url)
     {
         static $_is_literal = true;
         
@@ -197,7 +197,7 @@ class IZY_Router
         else if ($_is_literal)
         {
             $_is_literal = false;
-            $this->set_path($url);
+            $this->set_response($url);
         }
         else if (self::$_response_code != '404')
         {
@@ -205,7 +205,7 @@ class IZY_Router
 
             if(self::$_routes['404_url'] != '')
             {
-                $this->set_path(self::$_routes['404_url']);
+                $this->set_response(self::$_routes['404_url']);
             }
         }
     }
