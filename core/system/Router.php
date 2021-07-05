@@ -191,7 +191,7 @@ class IZY_Router
             {
                 $this->_args = array_slice($segments, 2);
                 // Path
-                $this->_path .= implode(DIRECTORY_SEPARATOR, $this->args);
+                $this->_path .= implode(DIRECTORY_SEPARATOR, $this->_args);
             }
         }
         else if ($_is_literal)
