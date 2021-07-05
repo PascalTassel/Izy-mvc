@@ -66,11 +66,12 @@ class IZY
         // Define Izy_Hooks as attribute
         $this->hooks =& load_class('Hooks');
 
-        // Call Pre_system class
-        $this->hooks->set_hook('pre_system');
-
         // Define Izy_Url as attribute
         $this->url =& load_class('Url');
+
+        // Call Pre_system class
+        $this->hooks->set_hook('pre_system');
+        
         // Define Izy_Router  as attribute (passing the request as argument)
         $this->router =& load_class('Router', 'system', $this->url->request);
 
