@@ -13,9 +13,9 @@ class IZY_Output
 {
     private static $_output = '';       // Response content
     private static $_time_taken = 0;    // Time load
-    private static $_start_time;        // Init time load
+    private static $_start_time = 0;    // Init time load
     private static $_layout = [];       // Layout datas
-    public $canonicals = [];            // Canonicals metas
+    private static $_canonicals = [];   // Canonicals metas
     
     /**
     * Init $_start_time attribute
@@ -25,6 +25,39 @@ class IZY_Output
     public function __construct()
     {
         self::$_start_time = microtime(TRUE);
+    }
+    
+    
+    /**
+    * Get and set attributes
+    *
+    * @param string $method Function name
+    * @param string $value Function name
+    *
+    * @return mixed|void
+    */
+    public function __call($method, $value)
+    {
+        $attribute = '_' . lcfirst(substr($method, 4));
+        
+        // Is it a valid attribute
+        if (property_exists($this, $attribute))
+        {
+            // Getter
+            if (strncasecmp($method, 'get_', 4) === 0)
+            {
+                return self::${$attribute};
+                
+            // Setter
+            } else if (strncasecmp($method, 'set_', 4) === 0) {
+                
+                // Is it same type
+                if (gettype($value) === gettype($this->$attribute))
+                {
+                    self::${$attribute} = $value;
+                }
+            }
+        }
     }
 
     /**
@@ -47,7 +80,7 @@ class IZY_Output
     *
     * @return void Canonical meta added to $canonicals array
     */
-    public function canonical($rel, $link)
+    public function add_canonical($rel, $link)
     {
         try {
             // Not isset $config ?
