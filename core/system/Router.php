@@ -11,12 +11,12 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Router
 {
-    private $_args = [];              // Method arguments
-    private $_controller = '';        // Response controller
-    private $_method = 'index';       // Default method
-    private $_path = '';              // Controller path
-    private $_response_code = '200';  // HTTP response code
-    private $_routes = [];            // Routes (defined in $routes[])
+    private static $_args = [];              // Method arguments
+    private static $_controller = '';        // Response controller
+    private static $_method = 'index';       // Default method
+    private static $_path = '';              // Controller path
+    private static $_response_code = '200';  // HTTP response code
+    private static $_routes = [];            // Routes (defined in $routes[])
     
     /**
     * Get routes and call _set_path() method
@@ -75,7 +75,7 @@ class IZY_Router
                 die;
             }
 
-            $this->_routes = $routes;
+            self::$_routes = $routes;
         }
         catch (IZY_Exception $e)
         {
@@ -83,7 +83,7 @@ class IZY_Router
         }
 
         // Index url if url empty
-        $url = ($url === '') ? $this->_routes['index'] : $url;
+        $url = ($url === '') ? self::$_routes['index'] : $url;
 
         $this->set_path($url);
     }
@@ -106,7 +106,7 @@ class IZY_Router
             // Getter
             if (strncasecmp($method, 'get_', 4) === 0)
             {
-                return $this->$attribute;
+                return self::${$attribute};
                 
             // Setter
             } else if (strncasecmp($method, 'set_', 4) === 0) {
@@ -114,7 +114,7 @@ class IZY_Router
                 // Is it same type
                 if (gettype($value) === gettype($this->$attribute))
                 {
-                    $this->$attribute = $value;
+                    self::${$attribute} = $value;
                 }
             }
         }
@@ -135,7 +135,7 @@ class IZY_Router
         if ($_is_literal) {
             $route = $url;
         } else {
-            $route = $this->_get_route($url);
+            $route = self::_get_route($url);
         }
 
         // Namespace
@@ -147,7 +147,7 @@ class IZY_Router
         // Controller
         $controller = '';
         // Method
-        $method = $this->_method;
+        $method = self::$_method;
 
         // Dir?
         $is_dir = is_dir(CONTROLLERS_PATH . $segments[0]);
@@ -181,17 +181,17 @@ class IZY_Router
         if (class_exists($controller) && in_array($method, get_class_methods($controller)))
         {
             // Path
-            $this->_path = $path;
+            self::$_path = $path;
             // Controller
-            $this->_controller = $controller;
+            self::$_controller = $controller;
             // Method
-            $this->_method = $method;
+            self::$_method = $method;
             // Arguments
             if(count($segments) > 2)
             {
-                $this->_args = array_slice($segments, 2);
+                self::$_args = array_slice($segments, 2);
                 // Path
-                $this->_path .= implode(DIRECTORY_SEPARATOR, $this->_args);
+                self::$_path .= implode(DIRECTORY_SEPARATOR, self::$_args);
             }
         }
         else if ($_is_literal)
@@ -199,13 +199,13 @@ class IZY_Router
             $_is_literal = false;
             $this->set_path($url);
         }
-        else if ($this->_response_code != '404')
+        else if (self::$_response_code != '404')
         {
-            $this->_response_code = '404';
+            self::$_response_code = '404';
 
-            if($this->_routes['404_url'] != '')
+            if(self::$_routes['404_url'] != '')
             {
-                $this->set_path($this->_routes['404_url']);
+                $this->set_path(self::$_routes['404_url']);
             }
         }
     }
@@ -217,16 +217,16 @@ class IZY_Router
     *
     * @return string Route according to request
     */
-    private function _get_route($url)
+    private static function _get_route($url)
     {
         // Isset literal route ?
-        if (isset($this->_routes[$url]))
+        if (isset(self::$_routes[$url]))
         {
-            return $this->_routes[$url];
+            return self::$_routes[$url];
         }
 
         // Loop on routes
-        foreach ($this->_routes as $key => $val)
+        foreach (self::$_routes as $key => $val)
         {
             // RegEx match ?
             if (preg_match('#^' . $key . '$#', $url))
