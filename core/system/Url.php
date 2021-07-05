@@ -43,7 +43,7 @@ class IZY_Url
     */
     public function get_host()
     {
-        $this->_host;
+        return $this->_host;
     }
     
     /**
@@ -78,7 +78,7 @@ class IZY_Url
     */
     public function get_protocol()
     {
-        $this->_protocol;
+        return $this->_protocol;
     }
     
     /**
@@ -113,7 +113,7 @@ class IZY_Url
     */
     public function get_queries()
     {
-        $this->_queries;
+        return $this->_queries;
     }
     
     /**
@@ -148,7 +148,7 @@ class IZY_Url
     */
     public function get_request()
     {
-        $this->_request;
+        return $this->_request;
     }
     
     /**
