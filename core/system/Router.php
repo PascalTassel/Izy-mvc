@@ -11,12 +11,12 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Router
 {
-    public $args = [];              // Method arguments
-    public $controller;             // Response controller
-    public $method = 'index';       // Default method
-    public $path;                   // Controller path
-    public $response_code = '200';  // HTTP response code
-    public $routes = [];            // Routes (defined in $routes[])
+    private $_args = [];              // Method arguments
+    private $_controller = '';        // Response controller
+    private $_method = 'index';       // Default method
+    private $_path = '';              // Controller path
+    private $_response_code = '200';  // HTTP response code
+    private $_routes = [];            // Routes (defined in $routes[])
     
     /**
     * Get routes and call _set_path() method
@@ -75,7 +75,7 @@ class IZY_Router
                 die;
             }
 
-            $this->routes = $routes;
+            $this->_routes = $routes;
         }
         catch (IZY_Exception $e)
         {
@@ -83,9 +83,41 @@ class IZY_Router
         }
 
         // Index url if url empty
-        $url = ($url === '') ? $this->routes['index'] : $url;
+        $url = ($url === '') ? $this->_routes['index'] : $url;
 
         $this->set_path($url);
+    }
+    
+    /**
+    * Get and set attributes
+    *
+    * @param string $method Function name
+    * @param string $value Function name
+    *
+    * @return mixed|void
+    */
+    public function __call($method, $value)
+    {
+        $attribute = '_' . substr($method, 4);
+        
+        // Is it a valid attribute
+        if (property_exists($this, $attribute))
+        {
+            // Getter
+            if (strncasecmp($method, 'get_', 4) === 0)
+            {
+                return $this->$attribute;
+                
+            // Setter
+            } else if (strncasecmp($method, 'set_', 4) === 0) {
+                
+                // Is it same type
+                if (gettype($value) === gettype($this->$attribute))
+                {
+                    $this->$attribute = $value;
+                }
+            }
+        }
     }
 
     /**
@@ -115,7 +147,7 @@ class IZY_Router
         // Controller
         $controller = '';
         // Method
-        $method = $this->method;
+        $method = $this->_method;
 
         // Dir?
         $is_dir = is_dir(CONTROLLERS_PATH . $segments[0]);
@@ -149,17 +181,17 @@ class IZY_Router
         if (class_exists($controller) && in_array($method, get_class_methods($controller)))
         {
             // Path
-            $this->path = $path;
+            $this->_path = $path;
             // Controller
-            $this->controller = $controller;
+            $this->_controller = $controller;
             // Method
-            $this->method = $method;
+            $this->_method = $method;
             // Arguments
             if(count($segments) > 2)
             {
-                $this->args = array_slice($segments, 2);
+                $this->_args = array_slice($segments, 2);
                 // Path
-                $this->path .= implode(DIRECTORY_SEPARATOR, $this->args);
+                $this->_path .= implode(DIRECTORY_SEPARATOR, $this->args);
             }
         }
         else if ($_is_literal)
@@ -167,13 +199,13 @@ class IZY_Router
             $_is_literal = false;
             $this->set_path($url);
         }
-        else if ($this->response_code != '404')
+        else if ($this->_response_code != '404')
         {
-            $this->response_code = '404';
+            $this->_response_code = '404';
 
-            if($this->routes['404_url'] != '')
+            if($this->_routes['404_url'] != '')
             {
-                $this->set_path($this->routes['404_url']);
+                $this->set_path($this->_routes['404_url']);
             }
         }
     }
@@ -188,13 +220,13 @@ class IZY_Router
     private function _get_route($url)
     {
         // Isset literal route ?
-        if (isset($this->routes[$url]))
+        if (isset($this->_routes[$url]))
         {
-            return $this->routes[$url];
+            return $this->_routes[$url];
         }
 
         // Loop on routes
-        foreach ($this->routes as $key => $val)
+        foreach ($this->_routes as $key => $val)
         {
             // RegEx match ?
             if (preg_match('#^' . $key . '$#', $url))

@@ -19,8 +19,8 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Url
 {
-    private $_host;           // Host
-    private $_protocol;       // Protocol
+    private $_host = '';           // Host
+    private $_protocol = '';       // Protocol
     private $_queries = [];   // Query parameters as associative array
     private $_request = '';   // Request
     
@@ -37,142 +37,34 @@ class IZY_Url
     }
     
     /**
-    * Get host
+    * Get and set attributes
     *
-    * @return string Host name
+    * @param string $method Function name
+    * @param string $value Function name
+    *
+    * @return mixed|void
     */
-    public function get_host()
+    public function __call($method, $value)
     {
-        return $this->_host;
-    }
-    
-    /**
-    * Set host
-    *
-    * @param string $host Hostname
-    *
-    * @throws IZY_Exception
-    *
-    * @return void
-    */
-    public function set_host($host)
-    {
-        try {
-            if (gettype($host) !== 'string')
-            {
-                throw new IZY_Exception('Le paramètre de la méthode IZY_Url->set_host() doit être une chaîne de caractères.');
-                die;
-            }
-            $this->_host = $host;
-        }
-        catch (IZY_Exception $e)
+        $attribute = '_' . lcfirst(substr($method, 4));
+        
+        // Is it a valid attribute
+        if (property_exists($this, $attribute))
         {
-          echo $e;
-        }
-    }
-    
-    /**
-    * Get protocol
-    *
-    * @return string Protocol
-    */
-    public function get_protocol()
-    {
-        return $this->_protocol;
-    }
-    
-    /**
-    * Set protocol
-    *
-    * @param string $protocol Protocol url
-    *
-    * @throws IZY_Exception
-    *
-    * @return void
-    */
-    public function set_protocol($protocol)
-    {
-        try {
-            if (gettype($protocol) !== 'string')
+            // Getter
+            if (strncasecmp($method, 'get_', 4) === 0)
             {
-                throw new IZY_Exception('Le paramètre de la méthode IZY_Url->set_protocol() doit être une chaîne de caractères.');
-                die;
+                return $this->$attribute;
+                
+            // Setter
+            } else if (strncasecmp($method, 'set_', 4) === 0) {
+                
+                // Is it same type
+                if (gettype($value) === gettype($this->$attribute))
+                {
+                    $this->$attribute = $value;
+                }
             }
-            $this->_protocol = $protocol;
-        }
-        catch (IZY_Exception $e)
-        {
-          echo $e;
-        }
-    }
-    
-    /**
-    * Get queries
-    *
-    * @return array Query string as associative array
-    */
-    public function get_queries()
-    {
-        return $this->_queries;
-    }
-    
-    /**
-    * Set queries
-    *
-    * @param array $queries Associative array
-    *
-    * @throws IZY_Exception
-    *
-    * @return void
-    */
-    public function set_queries($queries)
-    {
-        try {
-            if (gettype($queries) !== 'array')
-            {
-                throw new IZY_Exception('Le paramètre de la méthode IZY_Url->set_queries() doit être un tableau associatif.');
-                die;
-            }
-            $this->_queries = $queries;
-        }
-        catch (IZY_Exception $e)
-        {
-          echo $e;
-        }
-    }
-    
-    /**
-    * Get request
-    *
-    * @return string Request
-    */
-    public function get_request()
-    {
-        return $this->_request;
-    }
-    
-    /**
-    * Set request
-    *
-    * @param string $request Protocol url
-    *
-    * @throws IZY_Exception
-    *
-    * @return void
-    */
-    public function set_request($request)
-    {
-        try {
-            if (gettype($request) !== 'string')
-            {
-                throw new IZY_Exception('Le paramètre de la méthode IZY_Url->set_request() doit être une chaîne de caractères.');
-                die;
-            }
-            $this->_request = $request;
-        }
-        catch (IZY_Exception $e)
-        {
-          echo $e;
         }
     }
     

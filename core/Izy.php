@@ -134,10 +134,11 @@ class IZY
         $this->hooks->set_hook('pre_controller');
 
         // Set Header HTTP response code (depending on the response of the router)
-        $this->http->response_code($this->router->response_code);
+        echo 'code : ' . $this->router->get_response_code();
+        $this->http->response_code($this->router->get_response_code());
 
         // Retrieve the controller called by the request
-        $response_controller = $this->router->controller;
+        $response_controller = $this->router->get_controller();
         
         // If controller is defined
         if (!empty($response_controller))
@@ -149,7 +150,7 @@ class IZY
             get_instance()->{'controller'} = $class;
             
             // Call controller method passing arguments (depending on the response of the router)
-            call_user_func_array(array($class, $this->router->method), $this->router->args);
+            call_user_func_array(array($class, $this->router->get_method()), $this->router->get_args());
 
             // Call post_controller class
             $this->hooks->set_hook('post_controller');
@@ -164,7 +165,7 @@ class IZY
             $this->hooks->set_hook('pre_display');
 
             // Add canonical meta tag in $canonicals array
-            if($this->router->response_code != '404')
+            if ($this->router->get_response_code() != '404')
             {
                 $this->output->canonical('canonical', $this->url->get_request());
             }
