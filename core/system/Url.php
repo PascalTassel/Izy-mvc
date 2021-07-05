@@ -19,10 +19,10 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Url
 {
-    private $_host = '';           // Host
-    private $_protocol = '';       // Protocol
-    private $_queries = [];   // Query parameters as associative array
-    private $_request = '';   // Request
+    private static $_host = '';           // Host
+    private static $_protocol = '';       // Protocol
+    private static $_queries = [];   // Query parameters as associative array
+    private static $_request = '';   // Request
     
     /**
     * Call _set_uri() method
@@ -33,7 +33,7 @@ class IZY_Url
     */
     public function __construct()
     {
-        $this->_set_uri();
+        self::_set_uri();
     }
     
     /**
@@ -54,7 +54,7 @@ class IZY_Url
             // Getter
             if (strncasecmp($method, 'get_', 4) === 0)
             {
-                return $this->$attribute;
+                return self::${$attribute};
                 
             // Setter
             } else if (strncasecmp($method, 'set_', 4) === 0) {
@@ -62,7 +62,7 @@ class IZY_Url
                 // Is it same type
                 if (gettype($value) === gettype($this->$attribute))
                 {
-                    $this->$attribute = $value;
+                    self::${$attribute} = $value;
                 }
             }
         }
@@ -75,7 +75,7 @@ class IZY_Url
     */
     public function query_string()
     {
-        return http_build_query($this->_queries);
+        return http_build_query(self::$_queries);
     }
     
     /**
@@ -85,13 +85,13 @@ class IZY_Url
     *
     * @return void Attributes definition
     */
-    private function _set_uri()
+    private static function _set_uri()
     {
         // Set protocol
-        $this->_protocol = $_SERVER['REQUEST_SCHEME'] != '' ? $_SERVER['REQUEST_SCHEME'] : 'http';
+        self::$_protocol = $_SERVER['REQUEST_SCHEME'] != '' ? $_SERVER['REQUEST_SCHEME'] : 'http';
         if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on'))
         {
-            $this->_protocol = 'https';
+            self::$_protocol = 'https';
         }
 
         // Set host
@@ -101,20 +101,20 @@ class IZY_Url
                 throw new IZY_Exception('$config[\'host\'] non définie dans le fichier ' . CONFIG_PATH . 'config.php.');
                 die;
             }
-            $this->_host = strtolower(get_config('host'));
+            self::$_host = strtolower(get_config('host'));
         }
         catch (IZY_Exception $e)
         {
           echo $e;
         }
 
-        $uri = ltrim(str_replace($this->_host, '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
+        $uri = ltrim(str_replace(self::$_host, '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
 
         // Write request
-        $this->_request = strtolower(parse_url($uri, PHP_URL_PATH));
+        self::$_request = strtolower(parse_url($uri, PHP_URL_PATH));
 
         // Set queries parameters
         $query_string = strtolower(parse_url($uri, PHP_URL_QUERY));
-        parse_str($query_string, $this->_queries);
+        parse_str($query_string, self::$_queries);
     }
 }
