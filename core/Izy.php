@@ -134,7 +134,6 @@ class IZY
         $this->hooks->set_hook('pre_controller');
 
         // Set Header HTTP response code (depending on the response of the router)
-        echo 'code : ' . $this->router->get_response_code();
         $this->http->response_code($this->router->get_response_code());
 
         // Retrieve the controller called by the request
