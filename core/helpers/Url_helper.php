@@ -9,9 +9,11 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 */
 class IZY_Url_helper
 {
+    private $_IZY;
+    
     public function __construct()
     {
-
+        $this->_IZY =& get_instance();
     }
 
     public function check_queries($rules)
@@ -22,15 +24,15 @@ class IZY_Url_helper
         // Stockage de l'ordre correct des variables
         $vars_order = array_flip(array_keys($rules));
 
-        foreach($rules as $name => $value)
+        foreach ($rules as $name => $value)
         {
             // Dépendances, si la variable est dépendante
-            if(isset($q[$name]) && isset($value['depends']))
+            if (isset($q[$name]) && isset($value['depends']))
             {
-                foreach($value['depends'] as $field)
+                foreach ($value['depends'] as $field)
                 {
                     // Si la variable cible n'existe pas, on la crée
-                    if(!isset($q[$field]))
+                    if (!isset($q[$field]))
                     {
                         $q[$field] = '';
                     }
@@ -38,26 +40,26 @@ class IZY_Url_helper
             }
 
             // Variables manquantes ?
-            if(!isset($q[$name]))
+            if (!isset($q[$name]))
             {
-                if(isset($value['required']) && $value['required'] === TRUE)
+                if (isset($value['required']) && $value['required'] === TRUE)
                 {
                     $q[$name] = '';
                 }
-                else if(!isset($value['required']) || $value['required'] === FALSE)
+                else if (!isset($value['required']) || $value['required'] === FALSE)
                 {
                     unset($vars_order[$name]);
                 }
             }
         }
 
-        foreach($q as $name => $value)
+        foreach ($q as $name => $value)
         {
             // Si le paramètre est autorisé
-            if(isset($rules[$name]))
+            if (isset($rules[$name]))
             {
                 // Valeur string correcte ?
-                if($rules[$name]['type'] === 'string')
+                if ($rules[$name]['type'] === 'string')
                 {
                     $value = empty($value) ? '' : $value;
                     $value = strval($value);
@@ -75,33 +77,33 @@ class IZY_Url_helper
                     }
                 }
                 // Valeur de type int
-                else if($rules[$name]['type'] === 'int')
+                else if ($rules[$name]['type'] === 'int')
                 {
                     $value = empty($value) ? 0 : $value;
                     $value = intval($value);
 
-                    if(isset($rules[$name]['range']))
+                    if (isset($rules[$name]['range']))
                     {
-                        if($value <= $rules[$name]['range'][0])
+                        if ($value <= $rules[$name]['range'][0])
                         {
                             $q[$name] = strval($rules[$name]['range'][0]);
                         }
-                        else if($value > $rules[$name]['range'][1])
+                        else if ($value > $rules[$name]['range'][1])
                         {
                             $q[$name] =  strval($rules[$name]['range'][1]);
                         }
-                        else if(($value % $rules[$name]['range'][0]) != 0)
+                        else if (($value % $rules[$name]['range'][0]) != 0)
                         {
                             $q[$name] =  strval($rules[$name]['range'][0]);
                         }
                     }
-                    else if(isset($rules[$name]['min']) && ($q[$name] < $rules[$name]['min']))
+                    else if (isset($rules[$name]['min']) && ($q[$name] < $rules[$name]['min']))
                     {
-                            $q[$name] = strval($rules[$name]['min']);
+                        $q[$name] = strval($rules[$name]['min']);
                     }
-                    else if(isset($rules[$name]['max']) && ($q[$name] > $rules[$name]['max']))
+                    else if (isset($rules[$name]['max']) && ($q[$name] > $rules[$name]['max']))
                     {
-                    $q[$name] = strval($rules[$name]['max']);
+                        $q[$name] = strval($rules[$name]['max']);
                     }
                 }
             }
@@ -116,25 +118,25 @@ class IZY_Url_helper
         $q = array_merge($vars_order, $q);
 
         // Si la chaîne de sortie est différente
-        if(http_build_query($q) != $_SERVER['QUERY_STRING'])
+        if (http_build_query($q) != $_SERVER['QUERY_STRING'])
         {
             // On recharge la page
             $url = $this->current_url() . '?' . http_build_query($q);
-            get_instance()->http->redirect($url, TRUE, 301);
+            $this->_IZY->http->redirect($url, TRUE, 301);
         }
     }
 
     public function current_url($path = '')
     {
         $path = (gettype($path) == 'array') && count($path) > 0 ? implode('/', $path) : $path;
-        $url = get_instance()->url->request . ($path != '' ?  '/' . $path : '');
+        $url = $this->_IZY->url->get_request() . ($path != '' ?  '/' . $path : '');
 
         return $this->site_url($url);
     }
 
     public function get_queries()
     {
-        return get_instance()->url->queries;
+        return $this->_IZY->url->get_queries();
     }
 
     public function query_string()
@@ -152,13 +154,13 @@ class IZY_Url_helper
 
     public function segments()
     {
-        return explode('/', get_instance()->url->request);
+        return explode('/', $this->_IZY->url->get_request());
     }
 
     public function site_url($path = '')
     {
         $url = (gettype($path) == 'array') && (count($path) != 0) ? implode('/', $path) : $path;
 
-        return get_instance()->url->protocol . '://'. get_instance()->url->host . ($path != '' ?  '/' . $path : '');
+        return $this->_IZY->url->get_protocol() . '://'. $this->_IZY->url->get_host() . ($path != '' ?  '/' . $path : '');
     }
 }

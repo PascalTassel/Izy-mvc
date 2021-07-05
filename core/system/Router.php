@@ -27,7 +27,7 @@ class IZY_Router
     *
     * @return void Attribute definition
     */
-    public function __construct($url)
+    public function __construct($url = '')
     {
         // Get routes
         try {

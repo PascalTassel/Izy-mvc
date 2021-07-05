@@ -73,7 +73,7 @@ class IZY
         $this->hooks->set_hook('pre_system');
         
         // Define Izy_Router  as attribute (passing the request as argument)
-        $this->router =& load_class('Router', 'system', $this->url->request);
+        $this->router =& load_class('Router', 'system', $this->url->get_request());
 
         // Define remaining Izy classes as attributes
         $this->http =& load_class('Http');
@@ -166,7 +166,7 @@ class IZY
             // Add canonical meta tag in $canonicals array
             if($this->router->response_code != '404')
             {
-                $this->output->canonical('canonical', $this->url->request);
+                $this->output->canonical('canonical', $this->url->get_request());
             }
 
             // Write output
