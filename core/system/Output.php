@@ -12,52 +12,19 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Output
 {
     private static $_output = '';       // Response content
-    private static $_time_taken = 0;    // Time load
-    private static $_start_time = 0;    // Init time load
+    private static $_writing_time = 0;  // Time load
+    private static $_start = 0;         // Init time load
     private static $_layout = [];       // Layout datas
     private static $_canonicals = [];   // Canonicals metas
     
     /**
-    * Init $_start_time attribute
+    * Init $_start attribute
     *
     * @return void Attribute definition
     */
     public function __construct()
     {
-        self::$_start_time = microtime(TRUE);
-    }
-    
-    
-    /**
-    * Get and set attributes
-    *
-    * @param string $method Function name
-    * @param string $value Function name
-    *
-    * @return mixed|void
-    */
-    public function __call($method, $value)
-    {
-        $attribute = '_' . lcfirst(substr($method, 4));
-        
-        // Is it a valid attribute
-        if (property_exists($this, $attribute))
-        {
-            // Getter
-            if (strncasecmp($method, 'get_', 4) === 0)
-            {
-                return self::${$attribute};
-                
-            // Setter
-            } else if (strncasecmp($method, 'set_', 4) === 0) {
-                
-                // Is it same type
-                if (gettype($value) === gettype($this->$attribute))
-                {
-                    self::${$attribute} = $value;
-                }
-            }
-        }
+        self::$_start = microtime(TRUE);
     }
 
     /**
@@ -135,7 +102,7 @@ class IZY_Output
     */
     public function get_time()
     {
-        return self::$_time_taken;
+        return self::$_writing_time;
     }
     
     /**
@@ -253,7 +220,7 @@ class IZY_Output
         }
         
         // End time loading
-        self::$_time_taken = (microtime(TRUE) - self::$_start_time);
+        self::$_writing_time = (microtime(TRUE) - self::$_start);
 
         // Add HTTP headers : HTML made with PHP, no cache
         $instance->http->add_header('Expires: 0, false');
