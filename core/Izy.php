@@ -166,7 +166,7 @@ class IZY
             // Add canonical meta tag in $canonicals array
             if ($this->router->get_response_code() != '404')
             {
-                $this->output->canonical('canonical', $this->url->get_request());
+                $this->output->add_canonical('canonical', $this->url->get_request());
             }
 
             // Write output
