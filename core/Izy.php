@@ -130,11 +130,11 @@ class IZY
             }
         }
 
-        // Call pre_controller class
-        $this->hooks->set_hook('pre_controller');
-
         // Set Header HTTP response code (depending on the response of the router)
         $this->http->response_code($this->router->get_response_code());
+
+        // Call pre_controller class
+        $this->hooks->set_hook('pre_controller');
 
         // Retrieve the controller called by the request
         $response_controller = $this->router->get_controller();
