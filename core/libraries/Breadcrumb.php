@@ -1,19 +1,20 @@
 <?php
 namespace core\libraries;
 
-if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
-
 /**
-* Pagination component
-* @author https://www.izy-mvc.com
+* Build and write response
+*
+* @package Izy-mvc
+* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
 */
 class IZY_Breadcrumb
 {
-    protected $_home = 'Home';  // Root label
-    protected $_root = '';      // Root url
+    private static $_home = 'Home';  // Root label
+    private static $_root = '';      // Root url
     
     /**
     * Define settings
+    * 
     * @param array $settings Settings array
     */
     public function __construct(array $settings = [])
@@ -23,34 +24,60 @@ class IZY_Breadcrumb
         {
             $attribute = '_' . $attribute;
             
-            if(property_exists($this, $attribute))
+            // Is it a valid attribute?
+            if (property_exists($this, $attribute))
             {
-                $this->$attribute = $value;
+                
+                // Is it same type
+                if (gettype($value) === gettype(self::${$attribute}))
+                {
+                    self::${$attribute} = $value;
+                }
             }
         }
         
         $this->segments = [];
         $this->IZY =& get_instance();
         
-        if($this->_home !== '')
+        if (self::$_home !== '')
         {
-            $this->_root = ($this->_root !== '') ? $this->_root : $this->IZY->url_helper->site_url();
-            $this->add_segment($this->_home, $this->_root);
+            self::$_root = (self::$_root !== '') ? self::$_root : $this->IZY->url_helper->site_url();
+            $this->add_segment(self::$_home, self::$_root);
         }
     }
-
+    
     /**
-    * Add a segment in breadcrumb
+    * Add segment to breadcrumb
+    *
     * @param string $label Segment label
     * @param string $url Segment url
+    *
+    * @throws IZY_Exception
+    *
+    * @return void Added segment to breadcrumb
     */
-    public function add_segment(string $label = '', string $url = '')
+    public function add_segment($label = '', $url = '')
     {
-        $this->segments[$label] = $url;
+        try {
+            // Not isset $config ?
+            if (gettype($label) !== 'string' || gettype($url) !== 'string')
+            {
+                throw new IZY_Exception('IZY_Breadcrumb->add_segment() : Paramètres incorrects.');
+                die;
+            }
+            
+            $this->segments[$label] = $url;
+        }
+        catch (IZY_Exception $e)
+        {
+          echo $e;
+        }
     }
-
+    
     /**
     * Get breadcrumb's segments
+    *
+    * @return array Segments as an associative array
     */
     public function get_segments()
     {
