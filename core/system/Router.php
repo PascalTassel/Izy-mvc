@@ -112,7 +112,7 @@ class IZY_Router
             } else if (strncasecmp($method, 'set_', 4) === 0) {
                 
                 // Is it same type
-                if (gettype($value) === gettype($this->$attribute))
+                if (gettype($value) === gettype(self::${$attribute}))
                 {
                     self::${$attribute} = $value;
                 }
