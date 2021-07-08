@@ -88,8 +88,9 @@ class IZY_Url
     private static function _set_uri()
     {
         // Set protocol
-        self::$_protocol = $_SERVER['REQUEST_SCHEME'] != '' ? $_SERVER['REQUEST_SCHEME'] : 'http';
-        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on'))
+        self::$_protocol = ($_SERVER['REQUEST_SCHEME'] != '') ? $_SERVER['REQUEST_SCHEME'] : 'http';
+        
+        if (self::_is_https())
         {
             self::$_protocol = 'https';
         }
@@ -116,5 +117,12 @@ class IZY_Url
         // Set queries parameters
         $query_string = strtolower(parse_url($uri, PHP_URL_QUERY));
         parse_str($query_string, self::$_queries);
+    }
+    
+    private static function _is_https()
+    {
+      return
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || $_SERVER['SERVER_PORT'] == 443;
     }
 }
