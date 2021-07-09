@@ -109,7 +109,7 @@ function &load_class($class, $directory = 'system', $param = NULL)
 {
     static $_classes = [];
 
-    if(isset($_classes[$class]))
+    if (isset($_classes[$class]))
     {
         return $_classes[$class];
     }
@@ -122,11 +122,11 @@ function &load_class($class, $directory = 'system', $param = NULL)
         DIR_PATH . 'core' . DIRECTORY_SEPARATOR => 'core\\' . $directory . '\\IZY_'
     ];
 
-    foreach($namespaces as $path => $namespace)
+    foreach ($namespaces as $path => $namespace)
     {
-        if(file_exists($path . $directory . DIRECTORY_SEPARATOR . $class . '.php'))
+        if (file_exists($path . $directory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $class) . '.php'))
         {
-            if(class_exists($namespace . $class))
+            if (class_exists($namespace . $class))
             {
                 $name = $namespace . $class;
                 break;
@@ -137,13 +137,13 @@ function &load_class($class, $directory = 'system', $param = NULL)
     // Is a class extension (starting by 'MY_')? If so we load it
     if ($name !== FALSE)
     {
-        if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . 'MY_' . $class . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
+        if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . 'MY_' . str_replace('/', DIRECTORY_SEPARATOR, $class) . '.php') && class_exists($namespaces[APP_PATH] . 'MY_' . $class))
         {
             $name = $namespaces[APP_PATH] . 'MY_' . $class;
         }
     }
     // Load the specified class
-    else if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php') && class_exists($namespaces[APP_PATH] . $class))
+    else if (file_exists(APP_PATH . $directory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $class) . '.php') && class_exists($namespaces[APP_PATH] . $class))
     {
         $name = $namespaces[APP_PATH] . $class;
     }
@@ -152,7 +152,7 @@ function &load_class($class, $directory = 'system', $param = NULL)
         // We don't find the class?
         if ($name === FALSE)
         {
-            throw new \core\system\IZY_Exception('Fichier ' . APP_PATH . $directory . DIRECTORY_SEPARATOR . $class . '.php introuvable.');
+            throw new \core\system\IZY_Exception('Fichier ' . APP_PATH . $directory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $class) . '.php introuvable.');
             die;
         }
 
@@ -196,7 +196,7 @@ function &load_model($model)
 
     // Dir ?
     $segments = explode('/', $model);
-    if(count($segments) > 1)
+    if (count($segments) > 1)
     {
         $class = end($segments);
         $pop = array_pop($segments);
@@ -206,7 +206,7 @@ function &load_model($model)
     $class = $namespace . $class;
 
     // Look for the model in app/model/ dir
-    if(file_exists(MODELS_PATH . $model . '.php') && class_exists($class))
+    if (file_exists(MODELS_PATH . str_replace('/', DIRECTORY_SEPARATOR, $model) . '.php') && class_exists($class))
     {
         $name = $class;
     }
@@ -215,7 +215,7 @@ function &load_model($model)
         // Did we find the model?
         if ($name === FALSE)
         {
-            throw new \core\system\IZY_Exception('Modèle ' . MODELS_PATH . $model . '.php introuvable.');
+            throw new \core\system\IZY_Exception('Modèle ' . MODELS_PATH . str_replace('/', DIRECTORY_SEPARATOR, $modelhelper) . '.php introuvable.');
             die;
         }
 
