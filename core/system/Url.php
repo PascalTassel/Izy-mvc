@@ -20,9 +20,9 @@ if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 class IZY_Url
 {
     private static $_host = '';           // Host
-    private static $_protocol = '';       // Protocol
-    private static $_queries = [];   // Query parameters as associative array
-    private static $_request = '';   // Request
+    private static $_protocol = 'http';   // Protocol
+    private static $_queries = [];        // Query parameters as associative array
+    private static $_request = '';        // Request
     
     /**
     * Call _set_uri() method
@@ -87,9 +87,7 @@ class IZY_Url
     */
     private static function _set_uri()
     {
-        // Set protocol
-        self::$_protocol = ($_SERVER['REQUEST_SCHEME'] != '') ? $_SERVER['REQUEST_SCHEME'] : 'http';
-        
+        // Is https protocol ?
         if (self::_is_https())
         {
             self::$_protocol = 'https';
