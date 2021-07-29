@@ -11,7 +11,7 @@ $IZY =& get_instance();
     <body>
         <header>
             <a href="https://www.izy-mvc.com/">
-                <img src="https://www.izy-mvc.com/assets/im/brand.png">
+                <img src="https://www.izy-mvc.com/assets/im/brand.svg" width="120">
             </a>
         </header>
         <main>
