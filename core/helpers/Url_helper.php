@@ -166,11 +166,6 @@ class IZY_Url_helper
 
         return $this->site_url($url);
     }
-
-    public function get_queries()
-    {
-        return $this->_IZY->url->get_queries();
-    }
     
     /**
     * Get query string
