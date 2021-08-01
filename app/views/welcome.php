@@ -1,7 +1,6 @@
 <?php
 $IZY =& get_instance();
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
