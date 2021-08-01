@@ -6,6 +6,12 @@ $IZY =& get_instance();
     <head>
         <meta charset="utf-8">
         <title>Izy-mvc - Welcome</title>
+        <?php
+        foreach ($IZY->output->get_canonicals() as $rel => $link)
+        {
+            echo '<link rel="'. $rel .'" href="' . $link .'">' . "\n";
+        }
+        ?>
     </head>
     <body>
         <header>
