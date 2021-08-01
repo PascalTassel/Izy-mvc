@@ -154,20 +154,23 @@ class IZY
             // Call post_controller class
             $this->hooks->set_hook('post_controller');
 
-            // Unset called controller
-            unset($class);
-
             // Send HTTP Headers
             $this->http->send_headers();
 
             // Call pre_display class
             $this->hooks->set_hook('pre_display');
 
-            // Add canonical meta tag in $canonicals array
+            // Add request in $canonicals array
             if ($this->router->get_response_code() != '404')
             {
-                $this->output->add_canonical('canonical', $this->url->get_request());
+                $canonicalUrl = $this->url->get_request();
+                $queryString = $class->url_helper->query_string();
+                
+                $this->output->add_canonical('canonical', $canonicalUrl . ($queryString !== '' ? '?' . $queryString : ''));
             }
+
+            // Unset called controller
+            unset($class);
 
             // Write output
             $this->output->_display();
