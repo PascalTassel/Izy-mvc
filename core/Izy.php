@@ -147,6 +147,14 @@ class IZY
             
             // Add called controller to an attribute $controller of the main controller
             get_instance()->{'controller'} = $class;
+
+            // Add request in $canonicals array
+            if ($this->router->get_response_code() != '404')
+            {
+                $canonicalUrl = $class->url_helper->site_url($this->url->get_request());
+                $queryString = $class->url_helper->query_string();
+                $this->output->add_canonical('canonical', $canonicalUrl . ($queryString !== '' ? '?' . $queryString : ''));
+            }
             
             // Call controller method passing arguments (depending on the response of the router)
             call_user_func_array(array($class, $this->router->get_method()), $this->router->get_args());
@@ -159,15 +167,6 @@ class IZY
 
             // Call pre_display class
             $this->hooks->set_hook('pre_display');
-
-            // Add request in $canonicals array
-            if ($this->router->get_response_code() != '404')
-            {
-                $canonicalUrl = $this->url->get_request();
-                $queryString = $class->url_helper->query_string();
-                
-                $this->output->add_canonical('canonical', $canonicalUrl . ($queryString !== '' ? '?' . $queryString : ''));
-            }
 
             // Unset called controller
             unset($class);

@@ -117,7 +117,7 @@ class IZY_Pagination
 
         if($this->_page > 1)
         {
-            $this->IZY->output->add_canonical('prev', $this->_set_link($page - 1));
+            $this->IZY->output->add_canonical('prev', $this->IZY->url_helper->site_url($this->_set_link($page - 1)));
 
             $from = ($this->_page - $this->_range) <= 0 ? 1 : $this->_page - $this->_range;
             for($from; $from < $this->_page; $from ++)
@@ -128,14 +128,14 @@ class IZY_Pagination
 
         // Self
         $this->_links['self'] = ['page' => $this->_page, 'url' => $this->_set_link($this->_page)];
-        $this->IZY->output->add_canonical('canonical', $this->_set_link($page));
+        $this->IZY->output->add_canonical('canonical', $this->IZY->url_helper->site_url($this->_set_link($page)));
 
         // Nexts
         $this->_links['nexts'] = $this->_page < $this->_count ? [] : NULL;
 
         if($this->_page < $this->_count)
         {
-            $this->IZY->output->add_canonical('next', $this->_set_link($page + 1));
+            $this->IZY->output->add_canonical('next', $this->IZY->url_helper->site_url($this->_set_link($page + 1)));
 
             $to = ($this->_page + $this->_range) > $this->_count ? $this->_count : ($this->_page + $this->_range);
             for($from = ($this->_page + 1); $from <= $to; $from ++)
