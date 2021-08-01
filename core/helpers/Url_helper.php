@@ -44,7 +44,7 @@ class IZY_Url_helper
             else
             {
                 // Set default value if empty
-                if ($value === '')
+                if ($value === '' && (isset($rules[$name]['default'])))
                 {
                     $value = $rules[$name]['default'];
                 }
@@ -52,7 +52,7 @@ class IZY_Url_helper
                 // Wrong value ?
                 if (preg_match('#^' . $rules[$name]['pattern'] . '$#', $value) === 0)
                 {
-                    $value = $rules[$name]['default'];
+                    $value =  isset($rules[$name]['default']) ? $rules[$name]['default'] : '';
                 }
                 // Number rules ?
                 else if (isset($rules[$name]['range']) || isset($rules[$name]['min']) || isset($rules[$name]['max']))
@@ -100,7 +100,7 @@ class IZY_Url_helper
             // Add var if required
             if ($isRequired && !isset($q[$var]))
             {
-                $q[$var] = $rules[$var]['default'];
+                $q[$var] =  isset($rules[$var]['default']) ? $rules[$var]['default'] : '';
             }
             
             // Has dependancies
