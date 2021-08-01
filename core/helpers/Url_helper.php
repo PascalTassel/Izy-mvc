@@ -19,7 +19,7 @@ class IZY_Url_helper
     }
     
     /**
-    * Check url queries parameters
+    * Sanitize url queries parameters
     *
     * @param array $rules Associative array contains each parameter specifications
     *
@@ -153,10 +153,16 @@ class IZY_Url_helper
         }
     }
 
+    /**
+    * Get current_url
+    *
+    * @param string $path Url path to add to current path
+    *
+    * @return string Current url
+    */
     public function current_url($path = '')
     {
-        $path = (gettype($path) == 'array') && count($path) > 0 ? implode('/', $path) : $path;
-        $url = $this->_IZY->url->get_request() . ($path != '' ?  '/' . $path : '');
+        $url = $this->_IZY->url->get_request() . ($path !== '' ?  '/' . $path : '');
 
         return $this->site_url($url);
     }
@@ -165,29 +171,52 @@ class IZY_Url_helper
     {
         return $this->_IZY->url->get_queries();
     }
-
+    
+    /**
+    * Get query string
+    *
+    * @return string Query string
+    */
     public function query_string()
     {
         $queries = $this->_IZY->url->get_queries();
+        
         return http_build_query($queries, '', '&amp;');
     }
-
+    
+    /**
+    * Get url segment by index
+    *
+    * @param int Segment index
+    *
+    * @return string|null Url segment
+    */
     public function segment($key = 0)
     {
-        $k = (int) $key;
         $segments = $this->segments();
-        return (count($segments) >= ($k + 1)) && ($segments[$k] != '') ? $segments[$k] : NULL;
+        
+        return (count($segments) >= ($key + 1)) && ($segments[$key] != '') ? $segments[$key] : null;
     }
-
+    
+    /**
+    * Get url segments
+    *
+    * @return array url segments
+    */
     public function segments()
     {
         return explode('/', $this->_IZY->url->get_request());
     }
-
+    
+    /**
+    * Get site url
+    *
+    * @param string $path Url path to add to site url
+    *
+    * @return string Site url
+    */
     public function site_url($path = '')
     {
-        $url = (gettype($path) == 'array') && (count($path) != 0) ? implode('/', $path) : $path;
-
-        return $this->_IZY->url->get_protocol() . '://'. $this->_IZY->url->get_host() . ($path != '' ?  '/' . $path : '');
+        return $this->_IZY->url->get_protocol() . '://'. $this->_IZY->url->get_host() . ($path !== '' ?  '/' . $path : '');
     }
 }
