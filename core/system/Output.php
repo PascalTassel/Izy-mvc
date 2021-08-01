@@ -57,7 +57,7 @@ class IZY_Output
                 die;
             }
 
-            $this->canonicals[$rel] = $link;
+            self::$_canonicals[$rel] = $link;
         }
         catch (IZY_Exception $e)
         {
@@ -73,6 +73,16 @@ class IZY_Output
     public function empty()
     {
     	self::$_output = '';
+    }
+    
+    /**
+    * Get canonicals metas
+    *
+    * @return array Metas
+    */
+    public function get_canonicals()
+    {
+        return self::$_canonicals;
     }
     
     /**
@@ -140,7 +150,7 @@ class IZY_Output
     * @param string $view Path to view file
     * @param array $datas Associative array of datas intended for view
     *
-    * @return void Canonical meta added to $canonicals array
+    * @return void content view added to output
     */
     public function view($view, $datas = [])
     {
