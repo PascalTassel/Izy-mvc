@@ -59,7 +59,6 @@ class IZY_Database
                 foreach ($autoload['databases'] as $db)
                 {
                     $attribute = strtolower($db);
-                    echo $attribute;
                     $this->$attribute = $this->connect($db);
                 }
             }
