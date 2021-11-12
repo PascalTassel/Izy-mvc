@@ -289,13 +289,13 @@ function show_404()
     // 404 header
     $IZY->http->response_code('404');
 
-    $routes = $IZY->router->routes;
+    $routes = $IZY->router->get_routes();
 
     if ($routes['404_url'] != '')
     {
-        $IZY->router->set_path($routes['404_url']);
+        $IZY->router->set_response($routes['404_url']);
 
-        $controller_404 = $IZY->router->controller;
+        $controller_404 = $IZY->router->get_controller();
 
         if (!empty($controller_404))
         {
@@ -304,7 +304,7 @@ function show_404()
 
             // Call 404 controller
             $class = new $controller_404();
-            call_user_func_array(array($class, $IZY->router->method), $IZY->router->args);
+            call_user_func_array(array($class, $IZY->router->get_method()), $IZY->router->get_args());
 
             // Unset 404 controller
             unset($class);
