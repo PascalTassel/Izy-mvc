@@ -14,7 +14,7 @@ Vous avez un projet de création de site internet ou d'application web mais vous
 
 Alors, si vous disposez d'**un minimum de connaissance en PHP** et que vous souhaitez les mettre en pratique pour réaliser rapidement un projet web, **Izy-mvc est fait pour vous** !
 
-Inspiré de CodeIgniter, Izy-mvc est un framework PHP conçu sur le modèle de conception **MVC** (Modèle, Vue, Contrôleur), facile à configurer et à prendre en main. Concentrez-vous sur le contenu, il se chargera du reste !
+Inspiré de CodeIgniter, Izy-mvc est un framework PHP très léger conçu sur le modèle de conception **MVC** (Modèle, Vue, Contrôleur), facile à configurer et à prendre en main. Concentrez-vous sur le contenu, il se chargera du reste !
 
 ## Une configuration minimale
 
