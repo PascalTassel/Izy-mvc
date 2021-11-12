@@ -110,6 +110,9 @@ class IZY_Router
                 
             // Setter
             } else if (strncasecmp($method, 'set_', 4) === 0) {
+
+                // Get value
+                $value = $value[0];
                 
                 // Is it same type
                 if (gettype($value) === gettype(self::${$attribute}))
