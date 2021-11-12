@@ -16,7 +16,7 @@ Alors, si vous disposez d'**un minimum de connaissance en PHP** et que vous souh
 
 Inspiré de CodeIgniter, Izy-mvc est un framework PHP conçu sur le modèle de conception **MVC** (Modèle, Vue, Contrôleur), facile à configurer et à prendre en main. Concentrez-vous sur le contenu, il se chargera du reste !
 
-### Une configuration minimale
+## Une configuration minimale
 
 Je pars du principe que vous disposez au minimum d'un serveur web local (du type [WampServer](https://www.wampserver.com/) par exemple), chose indispensable pour pouvoir tester votre travail en local avant sa mise en ligne sur un serveur distant.
 
