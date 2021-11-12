@@ -181,35 +181,45 @@ class IZY_Router
             }
         }
 
-        if (class_exists($controller) && in_array($method, get_class_methods($controller)))
-        {
-            // Path
-            self::$_path = $path;
-            // Controller
-            self::$_controller = $controller;
-            // Method
-            self::$_method = $method;
-            // Arguments
-            if(count($segments) > 2)
+        try {
+            if (class_exists($controller) && in_array($method, get_class_methods($controller)))
             {
-                self::$_args = array_slice($segments, 2);
                 // Path
-                self::$_path .= implode(DIRECTORY_SEPARATOR, self::$_args);
+                self::$_path = $path;
+                // Controller
+                self::$_controller = $controller;
+                // Method
+                self::$_method = $method;
+                // Arguments
+                if(count($segments) > 2)
+                {
+                    self::$_args = array_slice($segments, 2);
+                    // Path
+                    self::$_path .= implode(DIRECTORY_SEPARATOR, self::$_args);
+                }
             }
-        }
-        else if ($_is_literal)
-        {
-            $_is_literal = false;
-            $this->set_response($url);
-        }
-        else if (self::$_response_code != '404')
-        {
-            self::$_response_code = '404';
-
-            if(self::$_routes['404_url'] != '')
+            else if ($_is_literal)
             {
-                $this->set_response(self::$_routes['404_url']);
+                $_is_literal = false;
+                $this->set_response($url);
             }
+            else if (self::$_response_code != '404')
+            {
+                self::$_response_code = '404';
+
+                if(self::$_routes['404_url'] != '')
+                {
+                    $this->set_response(self::$_routes['404_url']);
+                }
+            }
+            else {
+                throw new IZY_Exception('Route 404 introuvable : ' . $url);
+                die;
+            }
+        }
+        catch (IZY_Exception $e)
+        {
+          echo $e;
         }
     }
 
