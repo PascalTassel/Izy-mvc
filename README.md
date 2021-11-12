@@ -27,7 +27,7 @@ $config['host'] = $_SERVER['HTTP_HOST'] == 'localhost' ? 'localhost/mon-site' : 
 ```
 C'est tout ! Vous serez alors en mesure de créer vos premiers contrôleurs et vos premières vues pour donner vie à votre projet.
 
-### Un framework simple mais puissant
+## Un framework simple mais puissant
 
 Bien qu'il soit avant tout conçu pour les personnes débutantes, Izy-mvc conviendra également aux **utilisateurs plus exigeants**, leur permettant par exemple de gérer leurs dépendances installées à laide de **Composer**.
 
@@ -40,7 +40,7 @@ Izy-mvc permet également d'**étendre les classes du système**, afin qu'elles 
 
 Enfin, après avoir paramétrer la connexion à un serveur de base de données, vous serez en mesure de communiquer avec ce dernier en ayant recours à l'**objet PDO**.
 
-### Une documentation en français claire et complète
+## Une documentation en français claire et complète
 
 Avant de vous lancer dans la création de votre projet, je vous conseille dans un premier temps de parcourir la [documentation en ligne](https://www.izy-mvc.com/userguide/introduction).
 
