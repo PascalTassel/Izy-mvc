@@ -12,7 +12,7 @@ Un framework PHP simple, léger et puissant accessible aux **débutants en PHP**
 
 Vous avez un projet de création de site internet ou d'application web mais vous ne savez pas par où commencer, faute de compétences techniques ? CakePHP et Symfony vous semblent trop lourds et vous n'avez pas envie de passer du temps à les maîtriser ?
 
-Alors, si vous disposez d'**[un minimum de compétences en PHP](#competences-requises)** et que vous souhaitez les mettre en pratique pour réaliser rapidement un projet web, **Izy-mvc est fait pour vous** !
+Alors, si vous disposez d'**[un minimum de compétences en PHP](#compétences-requises)** et que vous souhaitez les mettre en pratique pour réaliser rapidement un projet web, **Izy-mvc est fait pour vous** !
 
 Inspiré de CodeIgniter, Izy-mvc est un framework PHP très léger conçu sur le modèle de conception **MVC** (Modèle, Vue, Contrôleur), facile à configurer et à prendre en main. Concentrez-vous sur le contenu, il se chargera du reste !
 
