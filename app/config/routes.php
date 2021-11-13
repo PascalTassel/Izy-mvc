@@ -1,5 +1,4 @@
 <?php
-
 if(!defined('IZY')) die('DIRECT ACCESS FORBIDDEN');
 
 /* URI ROUTING
