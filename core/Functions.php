@@ -37,42 +37,53 @@ function &get_config_files()
 {
     static $_config;
 
-    if(empty($_config))
+    if (empty($_config))
     {
-        try {
-            // Isset config file ?
-            if (!is_file(CONFIG_PATH . 'config.php'))
-            {
-                throw new \core\system\IZY_Exception('Fichier ' . CONFIG_PATH . 'config.php introuvable.');
-                die;
-            }
-            
+        $config_files = [];
+
+        // Isset config file ?
+        if (is_file(CONFIG_PATH . 'config.php'))
+        {
             // Include config file
             include(CONFIG_PATH . 'config.php');
-        }
-        catch (\core\system\IZY_Exception $e)
-        {
-          echo $e;
+            
+            array_push($config_files, 'config.php');
         }
 
-        // Include customs config files
-        foreach (scandir(CONFIG_PATH) as $file)
-        {
-            if (preg_match('#_config.php$#', $file))
-            {
-                include(CONFIG_PATH . $file);
-            }
-        }
-        
+        // Include custom config files
         try {
-            // Isset $config ?
-            if (!isset($config))
+
+            foreach (scandir(CONFIG_PATH) as $file)
             {
-                throw new \core\system\IZY_Exception('Tableau $config non défini dans le fichier ' . CONFIG_PATH . 'config.php.');
+                if (preg_match('#_config.php$#', $file))
+                {
+                    include(CONFIG_PATH . $file);
+    
+                    array_push($config_files, $file);
+                }
+            }
+
+            // Isset config files ?
+            if (count($config_files) === 0)
+            {
+                throw new \core\system\IZY_Exception('Aucun fichier de configuration défini dans ' . CONFIG_PATH);
                 die;
             }
-            
-            $_config = $config;
+
+            try {
+                // Isset $config ?
+                if (!isset($config))
+                {
+                    throw new \core\system\IZY_Exception('Tableau $config non défini un fichier de configuration.');
+                    die;
+                }
+                
+                $_config = $config;
+            }
+            catch (\core\system\IZY_Exception $e)
+            {
+            echo $e;
+            }
         }
         catch (\core\system\IZY_Exception $e)
         {

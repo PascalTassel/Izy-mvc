@@ -29,37 +29,42 @@ class IZY_Router
     */
     public function __construct($url = '')
     {
-        // Get routes
-        try {
-            // Not isset routes file ?
-            if (!is_file(CONFIG_PATH . 'routes.php'))
-            {
-                throw new IZY_Exception('Fichier ' . CONFIG_PATH . 'routes.php introuvable.');
-                die;
-            }
-            
-            // Include routes file
-            include(CONFIG_PATH . 'routes.php');
-        }
-        catch (IZY_Exception $e)
+
+        $routes_files = [];
+
+        // Isset route file ?
+        if (is_file(CONFIG_PATH . 'routes.php'))
         {
-          echo $e;
+            // Include config file
+            include(CONFIG_PATH . 'routes.php');
+            
+            array_push($routes_files, 'routes.php');
         }
 
         // Get custom routes
-        foreach (scandir(CONFIG_PATH) as $route)
-        {
-            if (preg_match('#_routes.php$#', $route))
-            {
-                include(CONFIG_PATH . $route);
-            }
-        }
-        
         try {
+
+            foreach (scandir(CONFIG_PATH) as $route)
+            {
+                if (preg_match('#_routes.php$#', $route))
+                {
+                    include(CONFIG_PATH . $route);
+    
+                    array_push($routes_files, $route);
+                }
+            }
+
+            // Isset routes files ?
+            if (count($routes_files) === 0)
+            {
+                throw new \core\system\IZY_Exception('Aucun fichier de routes défini dans ' . CONFIG_PATH);
+                die;
+            }
+
             // Not isset $routes?
             if (!isset($routes))
             {
-                throw new IZY_Exception('Tableau $routes non défini dans le fichier ' . CONFIG_PATH . 'routes.php.');
+                throw new IZY_Exception('Tableau $routes non défini dans un fichier de configuration.');
                 die;
             }
             // Not isset 404 url?

@@ -97,7 +97,7 @@ class IZY_Url
         try {
             if (is_null(get_config('host')) || empty(get_config('host')))
             {
-                throw new IZY_Exception('$config[\'host\'] non définie dans le fichier ' . CONFIG_PATH . 'config.php.');
+                throw new IZY_Exception('$config[\'host\'] non définie dans un fichier de configuration.');
                 die;
             }
             self::$_host = strtolower(get_config('host'));
