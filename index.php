@@ -4,8 +4,13 @@
 *
 * Define required constants and autoload framework classes 
 *
-* @package Izy-mvc
-* @copyright 2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
+* @package      Izy-mvc
+* @author       Pascal Tassel
+* @copyright    2021 © Pascal Tassel for https://www.izy-mvc.com <contact[@]izy-mvc.com>
+* @license	    https://opensource.org/licenses/MIT	MIT License
+* @link	        https://www.izy-mvc.com
+* @since	    v1.0.0
+* @version	    v1.0.0
 */
 
 // IZY
