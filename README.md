@@ -1,7 +1,5 @@
 # Izy-mvc
 
-![Izy-mvc, framework PHP](https://www.izy-mvc.com/assets/im/brand.svg)
-
 ![Compatible Php 7 & 8](https://img.shields.io/badge/Compatible%20Php-7%20&%208-blue)
 
 [www.izy-mvc.com](https://www.izy-mvc.com)
