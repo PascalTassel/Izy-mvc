@@ -6,11 +6,11 @@
 
 [www.izy-mvc.com](https://www.izy-mvc.com)
 
-Un framework PHP simple, léger et puissant spécialement conçu pour les **débutants en PHP**.
+Un framework PHP simple, léger et puissant accessible aux **débutants en PHP**.
 
 ## Une alternative aux frameworks professionnels
 
-Vous avez un projet de création de site internet ou d'application web mais vous ne savez pas par où commencer, faute de compétences techniques ? CakePHP et Symfony vous semblent trop lourds et vous n'avez pas envie de passer du temps à les apprendre ?
+Vous avez un projet de création de site internet ou d'application web mais vous ne savez pas par où commencer, faute de compétences techniques ? CakePHP et Symfony vous semblent trop lourds et vous n'avez pas envie de passer du temps à les maîtriser ?
 
 Alors, si vous disposez d'**un minimum de connaissance en PHP** et que vous souhaitez les mettre en pratique pour réaliser rapidement un projet web, **Izy-mvc est fait pour vous** !
 
@@ -29,12 +29,12 @@ C'est tout ! Vous serez alors en mesure de créer vos premiers contrôleurs et v
 
 ## Un framework simple mais puissant
 
-Bien qu'il soit avant tout conçu pour les personnes débutantes, Izy-mvc conviendra également aux **utilisateurs plus exigeants**, leur permettant par exemple de gérer leurs dépendances installées à laide de **Composer**.
+Bien qu'il soit accessible aux personnes débutantes, Izy-mvc conviendra également aux **utilisateurs plus exigeants**, leur permettant par exemple de gérer leurs dépendances installées à laide de **Composer**.
 
 Ils apprécieront également son **système de routage des URL** permettant de modifier le comportement par défaut du framework, basé sur le principe suivant :
 
 ```html
-http://domain.com/class/method/argument
+http://domain.com/controller/method/argument
 ```
 Izy-mvc permet également d'**étendre les classes du système**, afin qu'elles puissent pleinement répondre aux besoins spécifiques de votre application.
 
